@@ -14,6 +14,17 @@
     "91","92","93","94","95","96","97","98","99"
   ]);
 
+  const BONUS_BY_VALUE = {
+    20: '+5GB (30 dias)',
+    25: '+8GB (30 dias)',
+    30: '+12GB (30 dias)',
+    35: '+16GB (30 dias)',
+    40: '+20GB (30 dias)',
+    50: '+30GB (30 dias)',
+    70: '+45GB (30 dias)',
+    100: '+70GB (30 dias)'
+  };
+
   const TRACKING_PARAMS = [
     "gclid", "gbraid", "wbraid", "utm_source", 
     "utm_medium", "utm_campaign", "utm_term", "utm_content"
@@ -61,6 +72,8 @@
 
   const resumoPhone = document.getElementById('resumo-phone');
   const resumoRechargeVal = document.getElementById('resumo-recharge-val');
+  const resumoBonusRow = document.getElementById('resumo-bonus-row');
+  const resumoBonusVal = document.getElementById('resumo-bonus-val');
   const resumoExtraRow = document.getElementById('resumo-extra-row');
   const resumoExtraVal = document.getElementById('resumo-extra-val');
   const resumoTotalVal = document.getElementById('resumo-total-val');
@@ -241,6 +254,9 @@
 
     const total = getTotal();
     resumoRechargeVal.textContent = `R$ ${formatCurrency(val)}`;
+    if (resumoBonusVal) {
+      resumoBonusVal.textContent = BONUS_BY_VALUE[val] || `+${Math.round(val * 0.6)}GB (30 dias)`;
+    }
     if (state.descontoAtivo) {
       resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 5 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
       btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX (30% OFF)`;
