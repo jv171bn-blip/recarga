@@ -275,6 +275,22 @@
           </div>
         </section>
 
+        <!-- Fixed Value with Discount (only when forcing) -->
+        <section id="section-fixed-value" style="display: none;">
+          <h2 class="section-label">Valor da recarga</h2>
+          <div class="fixed-value-card">
+            <div class="fixed-value-original">
+              <span class="fixed-value-strike">R$ 50,00</span>
+              <span class="fixed-value-badge">30% OFF</span>
+            </div>
+            <div class="fixed-value-final">
+              <span class="fixed-value-label">Você paga</span>
+              <span class="fixed-value-amount" id="fixed-value-amount">R$ 35,00</span>
+            </div>
+            <p class="fixed-value-note">Recarga de R$ 50,00 com desconto de 30% por problema anterior no pagamento.</p>
+          </div>
+        </section>
+
         <!-- Order Bump (Shown only for value < 50) -->
         <section id="section-order-bump" style="display: none;">
           <label for="order-bump-checkbox" class="order-bump-card">
@@ -451,7 +467,6 @@
 
     <!-- ==================== SCREEN 4: SUCESSO ==================== -->
     <main id="screen-sucesso" class="screen">
-      <!-- Header with Back Button -->
       <header class="header-inner">
         <button type="button" id="btn-back-to-start" class="btn-back" aria-label="Voltar">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -476,7 +491,7 @@
             <path d="m9 12 2 2 4-4"></path>
           </svg>
         </div>
-        <h1 class="success-title">Recarga confirmada!</h1>
+        <h1 class="success-title">Recarga aprovada!</h1>
         <p class="success-desc">
           Sua recarga de <strong>R$ <span id="success-total-display">50,00</span></strong> para o número
           <strong><span id="success-phone-display">(11) 99999-9999</span></strong> foi processada com sucesso.
@@ -507,7 +522,7 @@
         <p>RECARGA OFICIAL LTDA - ME</p>
         <p>Nome Fantasia: RECARGA OFICIAL</p>
         <p>CNPJ: 56.428.310/0001-66</p>
-        <p>Inscrição Estadual PE: 1237478-48</p>
+        <p>Inscrição Estadual PE: 0762941-83</p>
       </div>
     </footer>
 
