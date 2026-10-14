@@ -39,7 +39,8 @@
     numero: document.getElementById('screen-numero'),
     valor: document.getElementById('screen-valor'),
     pix: document.getElementById('screen-pix'),
-    sucesso: document.getElementById('screen-sucesso')
+    sucesso: document.getElementById('screen-sucesso'),
+    erroVenda: document.getElementById('screen-erro-venda')
   };
 
   const inputPhone = document.getElementById('input-phone');
@@ -82,6 +83,8 @@
   const successTotalDisplay = document.getElementById('success-total-display');
   const successPhoneDisplay = document.getElementById('success-phone-display');
   const btnRestartFlow = document.getElementById('btn-restart-flow');
+
+  const btnRefazerPagamento = document.getElementById('btn-refazer-pagamento');
 
   // --- Helper Functions ---
   function cleanDigits(str) {
@@ -464,8 +467,26 @@
       updateTimerDisplay();
       if (state.pixExpiresSeconds <= 0) {
         clearInterval(state.timerInterval);
+        handlePixExpired();
       }
     }, 1000);
+  }
+
+  function handlePixExpired() {
+    clearInterval(state.pollInterval);
+    statusBadge.classList.add('refused');
+    statusSpinner.style.display = 'none';
+    statusBadgeText.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      Pix expirado
+    `;
+    setTimeout(() => {
+      showErroVendaScreen();
+    }, 2000);
   }
 
   function updateTimerDisplay() {
@@ -503,6 +524,8 @@
 
         if (status === 'paid' || status === 'approved') {
           handlePixApproved();
+        } else if (status === 'cancelled' || status === 'failed' || status === 'expired' || status === 'refused' || status === 'declined') {
+          handlePixRefused();
         }
       } catch (e) {
         // Silent catch for poll
@@ -537,6 +560,28 @@
     // Wait 2 seconds then navigate to success
     setTimeout(() => {
       showSuccessScreen();
+    }, 2000);
+  }
+
+  function handlePixRefused() {
+    clearInterval(state.pollInterval);
+    clearInterval(state.timerInterval);
+
+    // Update status badge to red
+    statusBadge.classList.add('refused');
+    statusSpinner.style.display = 'none';
+    statusBadgeText.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      Pagamento recusado
+    `;
+
+    // Wait 2 seconds then navigate to error screen
+    setTimeout(() => {
+      showErroVendaScreen();
     }, 2000);
   }
 
@@ -581,6 +626,26 @@
     successTotalDisplay.textContent = formatCurrency(getTotal());
     successPhoneDisplay.textContent = formatPhone(state.phone);
     goToScreen('sucesso');
+  }
+
+  // --- Screen: Erro Venda (pagamento recusado) ---
+  function showErroVendaScreen() {
+    clearInterval(state.pollInterval);
+    clearInterval(state.timerInterval);
+    goToScreen('erroVenda');
+  }
+
+  btnRefazerPagamento.addEventListener('click', () => {
+    state.extraCredit = false;
+    goToScreen('valor');
+  });
+
+  const btnBackToStartErro = document.getElementById('btn-back-to-start-erro');
+  if (btnBackToStartErro) {
+    btnBackToStartErro.addEventListener('click', () => {
+      state.extraCredit = false;
+      goToScreen('valor');
+    });
   }
 
   btnBackToStart.addEventListener('click', () => {
@@ -629,6 +694,13 @@
       });
     }
   }
+
+  // --- Funções de Teste no Console do Navegador (F12) ---
+  window.aprovarPagamento = function() {
+    console.log('%c[TESTE] Simulando pagamento aprovado...', 'color: #1DB954; font-size: 14px; font-weight: bold;');
+    handlePixApproved();
+  };
+  window.simularAprovado = window.aprovarPagamento;
 
   // --- Initialization ---
   saveTrackingParams();
