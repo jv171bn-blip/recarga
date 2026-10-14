@@ -1,0 +1,17 @@
+{
+  "name": "tim-recarga",
+  "version": "1.0.0",
+  "description": "Reprodução fiel do site TIM Recarga com suporte a Pix e fluxo completo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "tim",
+    "recarga",
+    "pix"
+  ],
+  "author": "",
+  "license": "ISC"
+}
