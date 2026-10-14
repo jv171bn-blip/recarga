@@ -765,8 +765,68 @@ body {
   color: var(--tim-text-muted);
 }
 
-/* Order Bump Card */
-.order-bump-card {
+/* Fixed Value with Discount */
+  .fixed-value-card {
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--tim-yellow);
+    background: linear-gradient(135deg, rgba(255, 210, 0, 0.12) 0%, rgba(255, 210, 0, 0.04) 100%);
+    padding: 24px;
+    text-align: center;
+  }
+
+  .fixed-value-original {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .fixed-value-strike {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: line-through;
+  }
+
+  .fixed-value-badge {
+    display: inline-block;
+    background-color: var(--tim-green);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    letter-spacing: 0.05em;
+  }
+
+  .fixed-value-final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .fixed-value-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .fixed-value-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--tim-yellow);
+  }
+
+  .fixed-value-note {
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Order Bump Card */
+  .order-bump-card {
   display: flex;
   align-items: flex-start;
   gap: 12px;
