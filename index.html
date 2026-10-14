@@ -541,6 +541,33 @@
 
   </div>
 
+    <!-- ==================== POPUP PÓS-VENDA ==================== -->
+    <div id="popup-posvenda" class="popup-posvenda" role="dialog" aria-live="polite">
+      <div class="popup-posvenda-overlay"></div>
+      <div class="popup-posvenda-content">
+        <div class="popup-posvenda-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h2 class="popup-posvenda-title">Pagamento recusado</h2>
+        <p class="popup-posvenda-desc">
+          Seu pagamento foi recusado e não foi concluído. Pedimos desculpas pelo transtorno.
+        </p>
+        <p class="popup-posvenda-desc">
+          Como pedido de desculpas, você recebe <strong>30% de desconto</strong> na próxima recarga que você fizer.
+        </p>
+        <p class="popup-posvenda-desc small">
+          Caso o pagamento já esteja no seu extrato, não se preocupe — o valor será estornado em questão de minutos.
+        </p>
+        <button type="button" id="btn-popup-refazer" class="popup-posvenda-btn">
+          Refazer pagamento com 30% de desconto
+        </button>
+      </div>
+    </div>
+
   <script src="app.js"></script>
 </body>
 </html>
