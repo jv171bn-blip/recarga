@@ -596,7 +596,42 @@
     goToScreen('numero');
   });
 
+  // --- Cookie Consent Banner ---
+  const cookieBanner = document.getElementById('cookie-banner');
+  const btnCookieAccept = document.getElementById('btn-cookie-accept');
+  const btnCookieReject = document.getElementById('btn-cookie-reject');
+  const COOKIE_STORAGE_KEY = 'tim_cookies_consent';
+
+  function initCookieBanner() {
+    if (!cookieBanner) return;
+    try {
+      const consent = localStorage.getItem(COOKIE_STORAGE_KEY);
+      if (!consent) {
+        setTimeout(() => {
+          cookieBanner.classList.add('visible');
+        }, 350);
+      }
+    } catch (e) {
+      cookieBanner.classList.add('visible');
+    }
+
+    if (btnCookieAccept) {
+      btnCookieAccept.addEventListener('click', () => {
+        try { localStorage.setItem(COOKIE_STORAGE_KEY, 'accepted'); } catch (e) {}
+        cookieBanner.classList.remove('visible');
+      });
+    }
+
+    if (btnCookieReject) {
+      btnCookieReject.addEventListener('click', () => {
+        try { localStorage.setItem(COOKIE_STORAGE_KEY, 'rejected'); } catch (e) {}
+        cookieBanner.classList.remove('visible');
+      });
+    }
+  }
+
   // --- Initialization ---
   saveTrackingParams();
+  initCookieBanner();
 
 })();
