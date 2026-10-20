@@ -6,6 +6,22 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/desbloqueio",
+      "destination": "/desbloqueio.html"
+    },
+    {
+      "source": "/regularizacao",
+      "destination": "/desbloqueio.html"
+    },
+    {
+      "source": "/([1-6])/desbloqueio",
+      "destination": "/desbloqueio.html"
+    },
+    {
+      "source": "/([1-6])/regularizacao",
+      "destination": "/desbloqueio.html"
+    },
+    {
       "source": "/([1-6])/(.*)",
       "destination": "/$2"
     },

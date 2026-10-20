@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <script>
+    if (window.location.protocol.startsWith('http')) {
+      document.write('<base href="/">');
+    }
+  </script>
+  <meta name="theme-color" content="#0A1172" />
+  <meta name="color-scheme" content="light" />
+  <title>Recarregue agora e ganhe créditos bônus | TIM</title>
+  <meta name="description"
+    content="Recarregue seu TIM PRÉ online com rapidez e segurança. Ganhe bônus exclusivos na sua recarga com Pix." />
+  <link rel="icon" type="image/webp" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
+  <link rel="shortcut icon" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
+  <link rel="apple-touch-icon" href="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" />
+
+  <!-- Google Fonts: Inter (UI) + Share Tech Mono / Courier Prime (Thermal Receipt) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --tim-blue: #0A1172;
+      --tim-blue-dark: #070B4A;
+      --tim-blue-card: #0F1A8C;
+      --tim-red: #EC1E24;
+      --tim-yellow: #FFD200;
+      --tim-green: #1DB954;
+      --tim-danger: #FF3B30;
+      --tim-warning: #FF9500;
+      --cupom-bg: #FAF6EC;
+      --cupom-ink: #1C1B18;
+      --cupom-subtle: #4A4843;
+      --highlighter: #B4FF3B;
+      --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-cupom: 'Share Tech Mono', 'Courier Prime', 'Consolas', 'Courier New', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--tim-blue);
+      color: #FFFFFF;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 30px;
+    }
+
+    /* Container Principal */
+    .app-container {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: var(--tim-blue);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Topo Header */
+    .header-desbloqueio {
+      background: var(--tim-blue-dark);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .tim-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tim-logo-header-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      display: block;
+    }
+
+    .tim-header-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tim-header-company {
+      font-size: 16px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+
+    .tim-header-badge-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .header-badge-anatel {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: rgba(255, 210, 0, 0.12);
+      border: 1px solid rgba(255, 210, 0, 0.35);
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--tim-yellow);
+      letter-spacing: 0.3px;
+    }
+
+    /* Stepper Bar (Etapas) */
+    .stepper-header {
+      background: rgba(7, 11, 74, 0.88);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stepper-track {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .step-node {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.45);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .step-node.active {
+      color: var(--tim-yellow);
+    }
+
+    .step-node.completed {
+      color: var(--tim-green);
+    }
+
+    .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .step-node.active .step-badge {
+      background: var(--tim-yellow);
+      color: var(--tim-blue);
+    }
+
+    .step-node.completed .step-badge {
+      background: var(--tim-green);
+      color: #FFFFFF;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 0 10px;
+      transition: background 0.3s ease;
+    }
+
+    .step-line.active {
+      background: var(--tim-yellow);
+    }
+
+    /* Telas do Fluxo */
+    .screen-flow {
+      display: none;
+      flex-direction: column;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .screen-flow.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================================================
+       SUPER BANNER: RESTRIÇÃO ATIVA NO NÚMERO
+       =================================================== */
+    .banner-restricao-critica {
+      background: linear-gradient(135deg, rgba(236, 30, 36, 0.35) 0%, rgba(10, 17, 114, 0.95) 100%);
+      border-bottom: 2px solid var(--tim-danger);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .restricao-header-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .badge-restricao-pulsante {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EC1E24;
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      box-shadow: 0 0 14px rgba(236, 30, 36, 0.7);
+      animation: pulseDanger 1.8s infinite;
+      text-transform: uppercase;
+    }
+
+    @keyframes pulseDanger {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(236, 30, 36, 0.6); }
+      50% { transform: scale(1.02); box-shadow: 0 0 18px rgba(236, 30, 36, 0.9); }
+    }
+
+    .restricao-protocolo-topo {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .restricao-protocolo-topo strong {
+      color: var(--tim-yellow);
+    }
+
+    .restricao-titulo-chamada {
+      font-size: 16px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .restricao-titulo-chamada span.numero-destacado {
+      color: var(--tim-yellow);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+
+    .restricao-alerta-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(236, 30, 36, 0.45);
+      border-left: 4px solid var(--tim-danger);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .restricao-alerta-box strong {
+      color: #FFD200;
+    }
+
+    /* ===================================================
+       SUPER CARD: TAXA DE R$ 14,90 EXPLÍCITA
+       =================================================== */
+    .card-taxa-destaque {
+      margin: 14px 16px 0 16px;
+      background: linear-gradient(135deg, #0F1A8C 0%, #070B4A 100%);
+      border: 2px solid var(--tim-yellow);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(255, 210, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .taxa-header-title {
+      font-size: 11.5px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--tim-yellow);
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .taxa-valor-box {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+
+    .taxa-valor-cifrao {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--tim-yellow);
+    }
+
+    .taxa-valor-numero {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--tim-yellow);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .taxa-valor-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 210, 0, 0.15);
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    .taxa-tabela-resumo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .taxa-linha-item {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .taxa-linha-item strong {
+      color: #FFFFFF;
+    }
+
+    .taxa-linha-item strong.retida {
+      color: #FF8080;
+    }
+
+    .taxa-linha-item strong.taxa-pagar {
+      color: var(--tim-yellow);
+      font-size: 13px;
+    }
+
+    .taxa-aviso-desbloqueio {
+      font-size: 11.5px;
+      line-height: 1.4;
+      background: rgba(29, 185, 84, 0.12);
+      border: 1px solid rgba(29, 185, 84, 0.35);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .taxa-aviso-desbloqueio strong {
+      color: #1DB954;
+    }
+
+    /* Resumo dos Dados do Cliente */
+    .card-dados-linha {
+      margin: 14px 16px 0 16px;
+      background: var(--tim-blue-card);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+    }
+
+    .dados-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dados-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .dados-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.3px;
+    }
+
+    .dados-valor {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge-status-bloqueio {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(236, 30, 36, 0.2);
+      border: 1px solid rgba(236, 30, 36, 0.45);
+      color: #FF8080;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-recarga-retida {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 210, 0, 0.15);
+      border: 1px solid rgba(255, 210, 0, 0.4);
+      color: var(--tim-yellow);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+
+    /* ===================================================
+       CONTAINER DA NOTA FISCAL (CORTADA ATÉ A METADE + BLUR)
+       =================================================== */
+    .cupom-fiscal-container {
+      margin: 18px 16px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cupom-fiscal-label-top {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* O container preview com limite de altura quando recolhido */
+    .cupom-preview-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: 6px;
+      overflow: hidden;
+      filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.55));
+      transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Estado Recolhido: Mostra somente até antes da metade (~210px) */
+    .cupom-preview-container.recolhido {
+      max-height: 210px;
+    }
+
+    /* Estado Expandido: Altura completa da nota fiscal */
+    .cupom-preview-container.expandido {
+      max-height: 2200px;
+      overflow: visible;
+    }
+
+    /* ===================================================
+       CORTINA DE BLUR E VIDRO FOSCO COM O BOTÃO
+       =================================================== */
+    .cupom-blur-overlay {
+      display: none;
+    }
+
+    .cupom-preview-container.recolhido .cupom-blur-overlay {
+      display: flex;
+      position: absolute;
+      top: 75px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(250, 246, 236, 0.1) 0%,
+        rgba(250, 246, 236, 0.8) 35%,
+        rgba(250, 246, 236, 0.98) 70%,
+        #FAF6EC 100%
+      );
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 16px 14px 16px;
+      gap: 6px;
+      z-index: 40;
+    }
+
+    .cupom-preview-container.expandido .cupom-blur-overlay {
+      display: none !important;
+    }
+
+    /* Botão VISUALIZAR NOTA FISCAL NF-e */
+    .btn-visualizar-nf {
+      background: #0A1172;
+      color: #FFFFFF;
+      border: 2px solid #FFD200;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 16px rgba(255, 210, 0, 0.45);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      width: 100%;
+      max-width: 320px;
+      justify-content: center;
+    }
+
+    .btn-visualizar-nf:hover {
+      background: #0F1A8C;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 210, 0, 0.6);
+    }
+
+    .btn-visualizar-nf:active {
+      transform: translateY(0);
+    }
+
+    .blur-hint {
+      font-size: 10.5px;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: #333333;
+      letter-spacing: 0.2px;
+      text-align: center;
+    }
+
+    /* Serrilha no Topo */
+    .cupom-serrilha-topo {
+      width: 100%;
+      height: 8px;
+      display: block;
+      vertical-align: bottom;
+    }
+
+    .cupom-serrilha-topo svg,
+    .cupom-serrilha-base svg {
+      width: 100%;
+      height: 8px;
+      display: block;
+    }
+
+    /* Corpo de Papel Térmico */
+    .cupom-paper-body {
+      background-color: var(--cupom-bg);
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 80%),
+        linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.03) 100%);
+      color: var(--cupom-ink);
+      font-family: var(--font-cupom);
+      font-size: 11px;
+      line-height: 1.32;
+      padding: 14px 16px;
+      position: relative;
+      letter-spacing: -0.2px;
+      text-align: left;
+    }
+
+    /* Carimbo D'água avermelhado no centro */
+    .cupom-watermark-stamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-14deg);
+      width: 220px;
+      height: 220px;
+      border: 3px dashed rgba(183, 28, 28, 0.13);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      pointer-events: none;
+      z-index: 1;
+      text-transform: uppercase;
+      font-family: var(--font-ui);
+      font-weight: 900;
+      color: rgba(183, 28, 28, 0.12);
+      text-align: center;
+      padding: 10px;
+    }
+
+    .cupom-watermark-stamp .stamp-title {
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .cupom-watermark-stamp .stamp-sub {
+      font-size: 9px;
+      letter-spacing: 0.5px;
+    }
+
+    .cupom-watermark-stamp .stamp-circle-inner {
+      width: 190px;
+      height: 190px;
+      border: 1.5px solid rgba(183, 28, 28, 0.10);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cupom-content-relative {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Cabeçalho do Cupom */
+    .cupom-header-center {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .cupom-company-name {
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .cupom-company-address {
+      font-size: 10.5px;
+      color: var(--cupom-subtle);
+      line-height: 1.25;
+    }
+
+    .cupom-company-docs {
+      font-size: 10px;
+      margin-top: 2px;
+      color: var(--cupom-ink);
+    }
+
+    .cupom-divider-dashed {
+      border: none;
+      border-top: 1px dashed rgba(0, 0, 0, 0.65);
+      margin: 5px 0;
+    }
+
+    .cupom-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    .cupom-title-fiscal {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin: 4px 0;
+    }
+
+    .cupom-table-headers {
+      font-size: 9.5px;
+      font-weight: 700;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.65);
+      padding-bottom: 3px;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+
+    .cupom-item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      margin-bottom: 3px;
+      line-height: 1.25;
+    }
+
+    .cupom-item-desc {
+      flex: 1;
+      padding-right: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cupom-item-values {
+      text-align: right;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    /* ===================================================
+       MARCA-TEXTO VERDE LIMÃO FLUORESCENTE (HIGHLIGHTER)
+       Idêntico ao da foto anexada pelo usuário
+       =================================================== */
+    .cupom-highlighter {
+      background: var(--highlighter);
+      background-image: linear-gradient(100deg, rgba(180, 255, 59, 0.95) 0%, rgba(190, 255, 70, 0.98) 60%, rgba(175, 255, 50, 0.92) 100%);
+      color: #000000;
+      display: block;
+      padding: 3px 6px;
+      margin: 4px -6px;
+      border-radius: 2px;
+      box-shadow: 0 0 12px rgba(180, 255, 59, 0.65);
+      font-weight: 700;
+      position: relative;
+      transform: rotate(-0.3deg);
+    }
+
+    .cupom-highlighter.secondary {
+      transform: rotate(0.2deg);
+      margin: 5px -6px;
+    }
+
+    .cupom-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .cupom-tef-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    /* Dados do Consumidor e Bloqueio */
+    .cupom-consumer-box {
+      font-size: 10px;
+      line-height: 1.35;
+      margin: 4px 0;
+    }
+
+    .cupom-consumer-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cupom-consumer-row strong {
+      font-weight: 700;
+    }
+
+    .cupom-impostos-row {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cupom-impostos-sub {
+      font-size: 9px;
+      font-weight: 500;
+      color: #222;
+      margin-top: 1px;
+    }
+
+    /* Rodapé Técnico da Impressora Fiscal (Daruma FS700 M) */
+    .cupom-footer-printer {
+      font-size: 9.5px;
+      color: var(--cupom-subtle);
+      line-height: 1.25;
+      margin-top: 4px;
+    }
+
+    .cupom-footer-center {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin: 4px 0;
+      color: var(--cupom-ink);
+    }
+
+    .cupom-footer-signature {
+      font-size: 9px;
+      letter-spacing: 0.3px;
+      word-break: break-all;
+    }
+
+    .cupom-footer-daruma {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--cupom-ink);
+      margin-top: 2px;
+    }
+
+    /* Ações do Cupom Quando Expandido */
+    .cupom-expandido-actions {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .cupom-preview-container.expandido + .cupom-expandido-actions {
+      display: flex;
+    }
+
+    .btn-imprimir-cupom {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 7px 14px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-imprimir-cupom:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-recolher-cupom {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 7px 14px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-recolher-cupom:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+
+    /* ===================================================
+       BOTÃO PRINCIPAL: PROSSEGUIR COM O PAGAMENTO
+       =================================================== */
+    .box-cta-prosseguir {
+      margin: 22px 16px 28px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-prosseguir-taxa {
+      width: 100%;
+      min-height: 60px;
+      background: var(--tim-yellow);
+      color: var(--tim-blue);
+      border: none;
+      border-radius: 14px;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 18px;
+      box-shadow: 0 8px 25px rgba(255, 210, 0, 0.45);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .btn-prosseguir-taxa:hover {
+      background: #FFE033;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 210, 0, 0.55);
+    }
+
+    .btn-prosseguir-taxa:active {
+      transform: translateY(0);
+    }
+
+    .garantia-seguranca {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.75);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+
+    /* ===================================================
+       TELA 2: PAGAMENTO DA TAXA PIX (R$ 14,90)
+       =================================================== */
+    .header-etapa-pagamento {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--tim-blue-dark);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-voltar-notificacao {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-voltar-notificacao:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .header-pagamento-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .card-resumo-liberacao {
+      margin: 14px 16px 0 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .resumo-liberacao-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .resumo-liberacao-item span {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .resumo-liberacao-item strong {
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .resumo-liberacao-item strong.highlight {
+      color: var(--tim-yellow);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .checkout-pix-card {
+      margin: 14px 16px 20px 16px;
+      background: var(--tim-blue-card);
+      border: 1.5px solid rgba(255, 210, 0, 0.45);
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .checkout-header {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .checkout-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 210, 0, 0.15);
+      color: var(--tim-yellow);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+
+    .checkout-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    .checkout-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .checkout-desc strong {
+      color: var(--tim-yellow);
+    }
+
+    /* Caixa do Valor e Timer */
+    .box-valor-timer {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .valor-info-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .valor-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .valor-destaque-pix {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--tim-yellow);
+      letter-spacing: -0.5px;
+    }
+
+    .timer-info-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .timer-label {
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+    }
+
+    .timer-digits {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      font-family: var(--font-cupom);
+      letter-spacing: 1px;
+    }
+
+    /* Estado de Gerando / Aguardando / Erro */
+    .pix-view-gerando {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .spinner-tim {
+      width: 36px;
+      height: 36px;
+      border: 3.5px solid rgba(255, 255, 255, 0.15);
+      border-top-color: var(--tim-yellow);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pix-view-aguardando {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* QR Code Card */
+    .qr-code-frame {
+      background: #FFFFFF;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto;
+    }
+
+    .qr-code-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    /* Copia e Cola Input */
+    .pix-copia-cola-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .copia-cola-input-group {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 4px 6px 4px 12px;
+    }
+
+    .copia-cola-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      font-family: var(--font-cupom);
+      outline: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-copiar-pix {
+      background: var(--tim-yellow);
+      color: var(--tim-blue);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: var(--font-ui);
+    }
+
+    .btn-copiar-pix:hover {
+      background: #FFE033;
+    }
+
+    .btn-copiar-pix.copiado {
+      background: var(--tim-green);
+      color: #FFFFFF;
+    }
+
+    /* Botão Grande de Ação */
+    .btn-acao-pagar {
+      width: 100%;
+      height: 52px;
+      background: var(--tim-yellow);
+      color: var(--tim-blue);
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(255, 210, 0, 0.35);
+      transition: all 0.2s ease;
+      font-family: var(--font-ui);
+    }
+
+    .btn-acao-pagar:hover {
+      background: #FFE033;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(255, 210, 0, 0.45);
+    }
+
+    /* Status Polling Badge */
+    .badge-polling-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .polling-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tim-yellow);
+      animation: blinkDot 1.4s infinite;
+    }
+
+    @keyframes blinkDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    /* Instruções 1 2 3 */
+    .lista-passos-pagar {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    .passo-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.35;
+    }
+
+    .passo-numero {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tim-yellow);
+      flex-shrink: 0;
+    }
+
+    /* ===================================================
+       TELA 3: SUCESSO (LINHA HOMOLOGADA E RECARGA LIBERADA)
+       =================================================== */
+    .view-sucesso-liberado {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 30px 16px;
+      gap: 16px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .sucesso-badge-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(29, 185, 84, 0.18);
+      border: 3px solid var(--tim-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--tim-green);
+      animation: popIn 0.4s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .sucesso-titulo {
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    .sucesso-card-detalhes {
+      background: var(--tim-blue-card);
+      border: 1.5px solid rgba(29, 185, 84, 0.45);
+      border-radius: 14px;
+      padding: 16px;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .sucesso-card-detalhes strong {
+      color: var(--tim-green);
+    }
+
+    .btn-voltar-home {
+      width: 100%;
+      height: 48px;
+      background: var(--tim-yellow);
+      color: var(--tim-blue);
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-family: var(--font-ui);
+    }
+
+    /* Rodapé Institucional */
+    .footer-desbloqueio {
+      background: var(--tim-blue-dark);
+      padding: 24px 18px;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.55);
+      text-align: center;
+    }
+
+    .footer-desbloqueio strong {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        padding: 0 !important;
+      }
+      .app-container {
+        max-width: 100% !important;
+        box-shadow: none !important;
+        background: #FFFFFF !important;
+      }
+      .header-desbloqueio,
+      .stepper-header,
+      .banner-restricao-critica,
+      .card-taxa-destaque,
+      .card-dados-linha,
+      .cupom-blur-overlay,
+      .cupom-expandido-actions,
+      .box-cta-prosseguir,
+      #screen-pagamento,
+      .footer-desbloqueio {
+        display: none !important;
+      }
+      .cupom-fiscal-container,
+      #screen-notificacao {
+        display: block !important;
+      }
+      .cupom-preview-container {
+        filter: none !important;
+        max-width: 320px !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .cupom-highlighter {
+        background: #C4FF55 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- Header Oficial TIM -->
+    <header class="header-desbloqueio">
+      <div class="tim-brand">
+        <img src="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" alt="TIM" class="tim-logo-header-img" />
+        <div class="tim-header-text-block">
+          <span class="tim-header-company">TIM S.A.</span>
+          <span class="tim-header-badge-sub">Regularização Cadastral</span>
+        </div>
+      </div>
+      <div class="header-badge-anatel">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        SISTEMA DE SEGURANÇA CADASTRAL
+      </div>
+    </header>
+
+    <!-- Barra de Progresso / Stepper -->
+    <div class="stepper-header">
+      <div class="stepper-track">
+        <div class="step-node active" id="step-nav-1">
+          <span class="step-badge" id="step-badge-1">1</span>
+          <span>Notificação & Restrição</span>
+        </div>
+        <div class="step-line" id="step-connector"></div>
+        <div class="step-node" id="step-nav-2">
+          <span class="step-badge" id="step-badge-2">2</span>
+          <span>Pagamento da Taxa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================
+         TELA 1: NOTIFICAÇÃO DE RESTRIÇÃO E TAXA R$ 14,90
+         =================================================== -->
+    <div id="screen-notificacao" class="screen-flow active">
+
+      <!-- SUPER BANNER: RESTRIÇÃO ATIVA NO NÚMERO -->
+      <section class="banner-restricao-critica">
+        <div class="restricao-header-badge-row">
+          <span class="badge-restricao-pulsante">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+            </svg>
+            RESTRIÇÃO ATIVA NA LINHA
+          </span>
+          <span class="restricao-protocolo-topo">
+            Protocolo Anatel: <strong id="protocolo-anatel">20261020-849201</strong>
+          </span>
+        </div>
+
+        <h1 class="restricao-titulo-chamada">
+          BLOQUEIO CADASTRAL PREVENTIVO NO NÚMERO:
+          <span class="numero-destacado" id="restricao-display-phone">(11) 99999-9999</span>
+        </h1>
+
+        <div class="restricao-alerta-box">
+          ⚠️ <strong>AVISO SISTÊMICO DA OPERADORA:</strong> Foi identificada uma pendência de validação de titularidade
+          (Lei nº 10.703/03 e Projeto Cadastro Pré-Pago Anatel). A sua linha está com <strong>restrição temporária de chamadas e dados móveis</strong>
+          e o valor da recarga de <strong>R$ <span id="alerta-recarga-val">50,00</span></strong> encontra-se sob custódia retida no bilhetador central.
+        </div>
+      </section>
+
+      <!-- SUPER CARD: TAXA DE REGULARIZAÇÃO R$ 14,90 EXPLÍCITA -->
+      <section class="card-taxa-destaque">
+        <div class="taxa-header-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          GUIA ÚNICA DE REGULARIZAÇÃO E DESBLOQUEIO DE LINHA
+        </div>
+
+        <div class="taxa-valor-box">
+          <span class="taxa-valor-cifrao">R$</span>
+          <span class="taxa-valor-numero">14,90</span>
+          <span class="taxa-valor-tag">TAXA ÚNICA SMP</span>
+        </div>
+
+        <div class="taxa-tabela-resumo">
+          <div class="taxa-linha-item">
+            <span>Recarga Contratada pelo Usuário:</span>
+            <strong class="retida">R$ <span id="taxa-recarga-val">50,00</span> (RETIDA)</strong>
+          </div>
+          <div class="taxa-linha-item">
+            <span>Taxa Regulatória de Homologação:</span>
+            <strong class="taxa-pagar">R$ 14,90 (PENDENTE DE QUITAÇÃO)</strong>
+          </div>
+          <div class="taxa-linha-item">
+            <span>Prazo de Liberação após Pagamento:</span>
+            <strong style="color: #1DB954;">Até 30 segundos via Pix</strong>
+          </div>
+        </div>
+
+        <div class="taxa-aviso-desbloqueio">
+          ✓ Ao pagar a taxa de <strong>R$ 14,90</strong>, o bloqueio do número <strong id="taxa-phone-display">(11) 99999-9999</strong> é baixado imediatamente e o saldo de <strong>R$ <span id="taxa-recarga-liberar">50,00</span></strong> é creditado na hora.
+        </div>
+      </section>
+
+      <!-- Resumo dos Dados do Titular / Linha -->
+      <section class="card-dados-linha">
+        <div class="dados-item">
+          <span class="dados-label">Linha com Restrição</span>
+          <span id="display-phone" class="dados-valor">(11) 99999-9999</span>
+        </div>
+        <div class="dados-item">
+          <span class="dados-label">Titular da Linha</span>
+          <span id="display-nome" class="dados-valor">CLIENTE TIM</span>
+        </div>
+        <div class="dados-item">
+          <span class="dados-label">Documento CPF</span>
+          <span id="display-cpf" class="dados-valor">000.000.000-00</span>
+        </div>
+        <div class="dados-item">
+          <span class="dados-label">Situação Cadastral</span>
+          <span class="badge-status-bloqueio">SUSPENSÃO PREVENTIVA</span>
+        </div>
+        <div class="dados-item full-width">
+          <span class="dados-label">Recarga em Custódia no Bilhetador</span>
+          <span class="badge-recarga-retida">
+            R$ <span id="display-recarga-val">50,00</span> (AGUARDANDO TAXA DE R$ 14,90)
+          </span>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           CUPOM FISCAL: APARECENDO ATÉ A METADE + BLUR + BOTÃO VISUALIZAR
+           =================================================== -->
+      <section class="cupom-fiscal-container">
+        <div class="cupom-fiscal-label-top">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          Comprovante Fiscal Emitido pelo Bilhetador Central
+        </div>
+
+        <!-- Container com controle de corte / blur -->
+        <div class="cupom-preview-container recolhido" id="cupom-preview-container">
+
+          <!-- Serrilha no Topo (Sawtooth corte de bobina) -->
+          <div class="cupom-serrilha-topo">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none">
+              <polygon
+                points="0,8 2.5,0 5,8 7.5,0 10,8 12.5,0 15,8 17.5,0 20,8 22.5,0 25,8 27.5,0 30,8 32.5,0 35,8 37.5,0 40,8 42.5,0 45,8 47.5,0 50,8 52.5,0 55,8 57.5,0 60,8 62.5,0 65,8 67.5,0 70,8 72.5,0 75,8 77.5,0 80,8 82.5,0 85,8 87.5,0 90,8 92.5,0 95,8 97.5,0 100,8"
+                fill="#FAF6EC" />
+            </svg>
+          </div>
+
+          <!-- Corpo do Papel Térmico -->
+          <div class="cupom-paper-body">
+            <!-- Carimbo D'água avermelhado no centro -->
+            <div class="cupom-watermark-stamp">
+              <div class="stamp-circle-inner">
+                <span class="stamp-title">HOMOLOGADO</span>
+                <span class="stamp-sub">TIM S.A. • ANATEL</span>
+                <span class="stamp-sub">SISTEMA CENTRAL</span>
+                <span style="font-size: 8px; margin-top: 2px;">LEI 10.703/03</span>
+              </div>
+            </div>
+
+            <div class="cupom-content-relative">
+              <!-- Cabeçalho do Emissor Fiscal -->
+              <div class="cupom-header-center">
+                <div class="cupom-company-name">TIM S.A.</div>
+                <div class="cupom-company-address">
+                  Av. Giovanni Gronchi, 7143 - Vila Andrade<br />
+                  Sao Paulo - SP - CEP: 05724-005
+                </div>
+                <div class="cupom-company-docs">
+                  CNPJ: 02.421.421/0001-11 &nbsp; IE: 110.042.490.114<br />
+                  IM: 1.083.015
+                </div>
+              </div>
+
+              <hr class="cupom-divider-dashed" />
+
+              <!-- Metadados do Cupom: Data/Hora, CCF, COO -->
+              <div class="cupom-meta-row">
+                <span id="cf-data-hora">20/10/2026 13:30:15</span>
+                <span>CCF:119474 &nbsp; COO:248875</span>
+              </div>
+
+              <!-- Título Fiscal -->
+              <div class="cupom-title-fiscal">C U P O M &nbsp; F I S C A L</div>
+
+              <!-- Cabeçalho da Tabela de Itens -->
+              <div class="cupom-table-headers">
+                ITEM CODIGO DESCRICAO QTD. UN. VL UNIT R$ ST A/T VL ITEM R$
+              </div>
+
+              <!-- Item 001: Taxa de Regularização SMP (R$ 14,90) -->
+              <div class="cupom-item-row">
+                <span class="cupom-item-desc">001 0884920 TAXA REGULARIZACAO SMP</span>
+                <span class="cupom-item-values">1un F1 14,90</span>
+              </div>
+
+              <!-- Item 002: Recarga Retida no Bilhetador -->
+              <div class="cupom-item-row">
+                <span class="cupom-item-desc">002 0914833 RECARGA RETIDA SISTEMA</span>
+                <span class="cupom-item-values">1un F1 <span id="cf-item-recarga">50,00</span></span>
+              </div>
+
+              <hr class="cupom-divider-dashed" />
+
+              <!-- ==========================================
+                   LINHA TOTAL COM MARCA-TEXTO VERDE LIMÃO
+                   (Fluorescent Highlighter sobre TOTAL e PIX)
+                   ========================================== -->
+              <div class="cupom-highlighter">
+                <div class="cupom-total-row">
+                  <span>TOTAL &nbsp; &nbsp; R$</span>
+                  <span>14,90</span>
+                </div>
+                <div class="cupom-tef-row">
+                  <span>PIX</span>
+                  <span>14,90</span>
+                </div>
+              </div>
+
+              <hr class="cupom-divider-dashed" />
+
+              <!-- Dados do Consumidor e Ocorrência Regulatória -->
+              <div class="cupom-consumer-box">
+                <div class="cupom-consumer-row">
+                  <span>CONSUMIDOR: <strong id="cf-consumidor-nome">--</strong></span>
+                </div>
+                <div class="cupom-consumer-row">
+                  <span>CPF: <strong id="cf-consumidor-cpf">--</strong></span>
+                  <span>NASC: <strong id="cf-consumidor-nasc">--</strong></span>
+                </div>
+                <div class="cupom-consumer-row">
+                  <span>TERMINAL SMP: <strong id="cf-consumidor-tel">--</strong></span>
+                </div>
+                <div style="margin-top: 3px; font-size: 9.5px; color: #222;">
+                  SITUACAO: SUSPENSAO PREVENTIVA / LEI 10.703/03<br />
+                  MOTIVO: BLOQUEIO CADASTRAL ANATEL (BLK-0477/RFB)<br />
+                  RECARGA RETIDA: R$ <span id="cf-recarga-retida">50,00</span> NO BILHETADOR
+                </div>
+              </div>
+
+              <!-- ==========================================
+                   LINHA VALOR DOS IMPOSTOS COM MARCA-TEXTO
+                   ========================================== -->
+              <div class="cupom-highlighter secondary">
+                <div class="cupom-impostos-row">
+                  <span>Valor dos Impostos: R$ 3,45 (23,15%)</span>
+                </div>
+                <div class="cupom-impostos-sub">
+                  Tributos Totais Incidentes (ICMS/FUST/FUNTTEL Lei 12.741/12)
+                </div>
+              </div>
+
+              <div class="cupom-consumer-box" style="margin-top: 4px;">
+                <div class="cupom-consumer-row">
+                  <span>ITEM(S) COMPRADOS 1</span>
+                </div>
+                <div class="cupom-consumer-row">
+                  <span>NR PDV.:26</span>
+                  <span>NR. CUPOM: 65565</span>
+                </div>
+                <div>Op.: SISTEMA CENTRAL TIM RECARGA</div>
+              </div>
+
+              <div class="cupom-footer-center">
+                DESBLOQUEIO AUTOMATICO EM ATE 30 SEGUNDOS<br />
+                APOS COMPENSACAO DO PIX
+              </div>
+
+              <hr class="cupom-divider-dashed" />
+
+              <!-- Rodapé Técnico da Impressora Fiscal (Daruma FS700 M) -->
+              <div class="cupom-footer-printer">
+                <div>MD5: 99650b2dfd172647d671c5f461011567</div>
+                <div>Calypso_CA CA.19.c27 - Unisys Brasil</div>
+                <div class="cupom-footer-signature">1A8 E0297 202FC 7720E9 89 95717E 007F2 12301 52F</div>
+                <div class="cupom-footer-daruma">
+                  <span>DARUMA AUTOMAÇÃO</span>
+                  <span>FS700 M</span>
+                </div>
+                <div class="cupom-footer-daruma" style="font-weight: 500;">
+                  <span>ECF-IF &nbsp; VERSÃO:01.01.00</span>
+                  <span>ECF:200 &nbsp; Lj:0001</span>
+                </div>
+                <div>OPR: IRACILDA 901214692</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+                  <span>HHHHHHHHHCGDADGCDHF</span>
+                  <span id="cf-footer-data">20/10/2026 13:30:41</span>
+                  <span>BR</span>
+                </div>
+                <div style="margin-top: 1px;">FAB: DR0610BR000000221122</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Serrilha na Base (Sawtooth corte de bobina) -->
+          <div class="cupom-serrilha-base">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none">
+              <polygon
+                points="0,0 2.5,8 5,0 7.5,8 10,0 12.5,8 15,0 17.5,8 20,0 22.5,8 25,0 27.5,8 30,0 32.5,8 35,0 37.5,8 40,0 42.5,8 45,0 47.5,8 50,0 52.5,8 55,0 57.5,8 60,0 62.5,8 65,0 67.5,8 70,0 72.5,8 75,0 77.5,8 80,0 82.5,8 85,0 87.5,8 90,0 92.5,8 95,0 97.5,8 100,0"
+                fill="#FAF6EC" />
+            </svg>
+          </div>
+
+          <!-- Cortina de Blur com Botão VISUALIZAR NOTA FISCAL NF-e -->
+          <div class="cupom-blur-overlay" id="cupom-blur-overlay">
+            <button type="button" id="btn-revelar-nf" onclick="window.alternarVisualizacaoNf()" class="btn-visualizar-nf">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span>VISUALIZAR NOTA FISCAL NF-e</span>
+            </button>
+            <span class="blur-hint">Toque para autenticar e expandir o documento fiscal completo</span>
+          </div>
+
+        </div>
+
+        <!-- Ações do Cupom Quando Expandido -->
+        <div class="cupom-expandido-actions" id="cupom-expandido-actions">
+          <button type="button" id="btn-imprimir" onclick="window.print()" class="btn-imprimir-cupom">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Imprimir Cupom
+          </button>
+          <button type="button" id="btn-recolher-nf" onclick="window.recolherCupomFiscal()" class="btn-recolher-cupom">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+            Recolher Documento
+          </button>
+        </div>
+      </section>
+
+      <!-- BOTÃO PRINCIPAL: REMOVER RESTRIÇÃO E DESBLOQUEAR LINHA -->
+      <section class="box-cta-prosseguir">
+        <button type="button" id="btn-ir-pagamento" onclick="window.avancarParaPagamento()" class="btn-prosseguir-taxa">
+          <span>Remover Restrição e Desbloquear Linha</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+        <div class="garantia-seguranca">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="2.5">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Ambiente Criptografado TIM S.A. • Desbloqueio e Liberação Imediata</span>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===================================================
+         TELA 2: PAGAMENTO DA TAXA PIX (R$ 14,90)
+         =================================================== -->
+    <div id="screen-pagamento" class="screen-flow">
+
+      <!-- Topo da Tela de Pagamento com Botão de Voltar -->
+      <div class="header-etapa-pagamento">
+        <button type="button" id="btn-voltar-notificacao" onclick="window.voltarParaNotificacao()" class="btn-voltar-notificacao" aria-label="Voltar para notificação">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="header-pagamento-title">Etapa 2: Pagamento da Taxa de Regularização</span>
+      </div>
+
+      <!-- Resumo da Liberação -->
+      <section class="card-resumo-liberacao">
+        <div class="resumo-liberacao-item">
+          <span>Linha com Restrição a Desbloquear:</span>
+          <strong id="checkout-phone">(11) 99999-9999</strong>
+        </div>
+        <div class="resumo-liberacao-item">
+          <span>Recarga em Custódia a ser Liberada:</span>
+          <strong>R$ <span id="checkout-recarga-val">50,00</span></strong>
+        </div>
+        <div class="resumo-liberacao-item">
+          <span>Taxa Única de Homologação Regulatória:</span>
+          <strong class="highlight">R$ 14,90</strong>
+        </div>
+      </section>
+
+      <!-- Card do Checkout Pix -->
+      <section class="checkout-pix-card" id="secao-pix-checkout">
+        <div class="checkout-header">
+          <span class="checkout-header-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+            DESBLOQUEIO INSTANTÂNEO VIA PIX
+          </span>
+          <h2 class="checkout-title">Efetue o Pagamento de R$ 14,90 via Pix</h2>
+          <p class="checkout-desc">
+            Escaneie o QR Code ou copie o código Pix abaixo. Após o pagamento da taxa de <strong>R$ 14,90</strong>, a restrição da linha será retirada e a recarga de
+            <strong>R$ <span id="checkout-desc-val">50,00</span></strong> será creditada imediatamente.
+          </p>
+        </div>
+
+        <!-- Resumo Valor e Timer -->
+        <div class="box-valor-timer">
+          <div class="valor-info-left">
+            <span class="valor-label">Taxa de Regularização</span>
+            <span class="valor-destaque-pix">R$ 14,90</span>
+          </div>
+          <div class="timer-info-right">
+            <span class="timer-label">Expira em</span>
+            <span id="pix-timer-countdown" class="timer-digits">15:00</span>
+          </div>
+        </div>
+
+        <!-- Estado: Gerando Pix -->
+        <div id="pix-view-gerando" class="pix-view-gerando">
+          <div class="spinner-tim"></div>
+          <p style="font-size: 13px; color: rgba(255,255,255,0.9);">
+            Conectando ao Bilhetador Central TIM e gerando código Pix...
+          </p>
+        </div>
+
+        <!-- Estado: Aguardando Pagamento com QR Code e Copia e Cola -->
+        <div id="pix-view-aguardando" class="pix-view-aguardando" style="display: none;">
+          <!-- QR Code -->
+          <div class="qr-code-frame">
+            <img id="pix-qr-img" src="" alt="QR Code Pix para Pagamento da Taxa de Regularização" class="qr-code-img" />
+          </div>
+
+          <!-- Status Polling Badge -->
+          <div class="badge-polling-status">
+            <span class="polling-dot"></span>
+            <span>Aguardando compensação... Verificando a cada 4 segundos</span>
+          </div>
+
+          <!-- Copia e Cola -->
+          <div class="pix-copia-cola-wrap">
+            <div class="copia-cola-input-group">
+              <input type="text" id="pix-input-copia" class="copia-cola-input" readonly
+                value="00020126580014br.gov.bcb.pix..." />
+              <button type="button" id="btn-copiar-pix" onclick="window.copiarCodigoPix()" class="btn-copiar-pix">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <span>Copiar Pix</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botão Grande Copiar e Pagar -->
+          <button type="button" id="btn-pagar-copiar-grande" onclick="window.copiarCodigoPix()" class="btn-acao-pagar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+            Copiar Código Pix para Desbloqueio
+          </button>
+
+          <!-- Passos para Pagamento -->
+          <ol class="lista-passos-pagar">
+            <li class="passo-item">
+              <span class="passo-numero">1</span>
+              <span>Abra o app do seu banco ou carteira digital de preferência</span>
+            </li>
+            <li class="passo-item">
+              <span class="passo-numero">2</span>
+              <span>Selecione a opção <strong>Pix Copia e Cola</strong> ou <strong>Ler QR Code</strong></span>
+            </li>
+            <li class="passo-item">
+              <span class="passo-numero">3</span>
+              <span>Confirme o pagamento de R$ 14,90. A liberação ocorre em até 30 segundos!</span>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Estado: Erro ao Gerar Pix -->
+        <div id="pix-view-erro" style="display: none; text-align: center; padding: 20px 10px;">
+          <p style="color: #FF8080; font-size: 13px; margin-bottom: 12px;" id="pix-erro-msg">
+            Não foi possível conectar ao bilhetador. Tente novamente.
+          </p>
+          <button type="button" id="btn-regerar-pix" onclick="window.gerarPixTaxa()" class="btn-acao-pagar" style="max-width: 200px; margin: 0 auto; height: 42px;">
+            Tentar Novamente
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===================================================
+         TELA 3: SUCESSO (LINHA HOMOLOGADA E RECARGA LIBERADA)
+         =================================================== -->
+    <section class="view-sucesso-liberado" id="view-sucesso">
+      <div class="sucesso-badge-icon">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </div>
+      <h2 class="sucesso-titulo">Linha Desbloqueada e Recarga Liberada!</h2>
+
+      <div class="sucesso-card-detalhes">
+        <div>
+          ✓ A taxa de regularização cadastral de <strong>R$ 14,90</strong> foi compensada com sucesso via Banco Central.
+        </div>
+        <div>
+          ✓ O bloqueio cautelar foi <strong>removido permanentemente</strong> dos registros da Anatel.
+        </div>
+        <div>
+          ✓ A sua recarga original no valor de <strong>R$ <span id="sucesso-recarga-val">50,00</span></strong> foi creditada na linha <strong id="sucesso-phone">(11) 99999-9999</strong> do titular <strong id="sucesso-nome">CLIENTE TIM</strong>.
+        </div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 6px;">
+          Protocolo de Homologação TIM / Anatel: <strong id="sucesso-protocolo">20261020-849201</strong>
+        </div>
+      </div>
+
+      <button type="button" id="btn-imprimir-sucesso" onclick="window.print()" class="btn-imprimir-cupom" style="margin: 4px 0 12px 0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        Imprimir Comprovante de Liberação
+      </button>
+
+      <a href="/" class="btn-voltar-home">Concluir e Voltar ao Início</a>
+    </section>
+
+    <!-- Rodapé Regulatório e Institucional -->
+    <footer class="footer-desbloqueio">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
+        <img src="images/glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp" alt="TIM" style="width: 26px; height: 26px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);" />
+        <strong style="color: #FFFFFF; font-size: 13px;">TIM S.A.</strong>
+      </div>
+      <div>
+        CNPJ: 02.421.421/0001-11 • Inscrição Estadual: 110.042.490.114<br />
+        Av. Giovanni Gronchi, 7143 - Vila Andrade, São Paulo - SP - CEP: 05724-005
+      </div>
+      <div>
+        Em conformidade com a <strong>Lei Federal nº 10.703/2003</strong> e <strong>Resolução Anatel nº 632/2014</strong>.<br />
+        Sistema integrado à Base Nacional do Projeto Cadastro Pré-Pago.
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="desbloqueio.js?v=3.0"></script>
+</body>
+
+</html>

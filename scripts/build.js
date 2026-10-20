@@ -11,13 +11,23 @@ if (!fs.existsSync(publicDir)) {
 // Copy root static files
 const filesToCopy = [
   'index.html',
+  'desbloqueio.html',
+  'desbloqueio.js',
   'styles.css',
   'app.js',
   'apple-icon.png',
   'icon.svg',
   'icon-dark-32x32.png',
-  'icon-light-32x32.png'
+  'icon-light-32x32.png',
+  'favicon.ico'
 ];
+
+// Ensure favicon.ico exists from the official glossy logo
+const logoFaviconSrc = path.join(rootDir, 'images', 'glossy-tim-mobile-logo-rounded-square-app-icon-free-png.webp');
+if (fs.existsSync(logoFaviconSrc)) {
+  fs.copyFileSync(logoFaviconSrc, path.join(rootDir, 'favicon.ico'));
+  fs.copyFileSync(logoFaviconSrc, path.join(publicDir, 'favicon.ico'));
+}
 
 filesToCopy.forEach(file => {
   const src = path.join(rootDir, file);
@@ -65,5 +75,43 @@ aliasRoutes.forEach(route => {
   }
   fs.writeFileSync(path.join(publicRouteDir, 'index.html'), indexHtml);
 });
+
+// Generate dedicated /desbloqueio and /regularizacao routes
+const desbloqueioSrc = path.join(rootDir, 'desbloqueio.html');
+if (fs.existsSync(desbloqueioSrc)) {
+  const desbloqueioHtml = fs.readFileSync(desbloqueioSrc, 'utf8');
+  const upsellRoutes = ['desbloqueio', 'regularizacao'];
+
+  upsellRoutes.forEach(route => {
+    const rootUpDir = path.join(rootDir, route);
+    if (!fs.existsSync(rootUpDir)) {
+      fs.mkdirSync(rootUpDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(rootUpDir, 'index.html'), desbloqueioHtml);
+
+    const publicUpDir = path.join(publicDir, route);
+    if (!fs.existsSync(publicUpDir)) {
+      fs.mkdirSync(publicUpDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(publicUpDir, 'index.html'), desbloqueioHtml);
+  });
+
+  // Also support /1/desbloqueio, /2/desbloqueio, etc.
+  aliasRoutes.forEach(alias => {
+    upsellRoutes.forEach(route => {
+      const rootAliasUp = path.join(rootDir, alias, route);
+      if (!fs.existsSync(rootAliasUp)) {
+        fs.mkdirSync(rootAliasUp, { recursive: true });
+      }
+      fs.writeFileSync(path.join(rootAliasUp, 'index.html'), desbloqueioHtml);
+
+      const pubAliasUp = path.join(publicDir, alias, route);
+      if (!fs.existsSync(pubAliasUp)) {
+        fs.mkdirSync(pubAliasUp, { recursive: true });
+      }
+      fs.writeFileSync(path.join(pubAliasUp, 'index.html'), desbloqueioHtml);
+    });
+  });
+}
 
 console.log('Build successful: static assets and 6 route paths (1-6) synced to root and public/');

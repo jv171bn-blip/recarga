@@ -22,12 +22,12 @@ module.exports = async (req, res) => {
     }
     body = body || {};
 
-    const { amount, telefone, productName, ...utmParams } = body;
+    const { amount, telefone, productName, customer, ...utmParams } = body;
     if (!amount) {
       return res.status(400).json({ success: false, error: 'Valor da recarga é obrigatório' });
     }
 
-    const sale = await createPixSale(amount, telefone, utmParams, null, productName);
+    const sale = await createPixSale(amount, telefone, utmParams, null, productName, customer);
     const pData = sale.data?.paymentData || {};
 
     return res.status(200).json({
