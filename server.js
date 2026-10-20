@@ -158,19 +158,37 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Handle alias routes: /1, /2, /3, /4, /5, /6
+  let resolvedPath = pathname;
+  const aliasMatch = pathname.match(/^\/([1-6])(\/.*)?$/);
+  if (aliasMatch) {
+    const sub = aliasMatch[2];
+    if (!sub || sub === '/' || sub === '/index.html') {
+      resolvedPath = '/index.html';
+    } else {
+      resolvedPath = sub;
+    }
+  }
+
   // Static File Serving
-  let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
+  let filePath = path.join(__dirname, resolvedPath === '/' ? 'index.html' : resolvedPath);
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
       // Check in public directory if exists
-      const publicPath = path.join(__dirname, 'public', pathname);
+      const publicPath = path.join(__dirname, 'public', resolvedPath);
       fs.stat(publicPath, (err2, stats2) => {
         if (!err2 && stats2.isFile()) {
           serveFile(publicPath, res);
         } else {
-          res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-          res.end('404 Not Found');
+          // Fallback to index.html for alias routes or not found
+          const fallbackIndex = path.join(__dirname, 'index.html');
+          if (fs.existsSync(fallbackIndex)) {
+            serveFile(fallbackIndex, res);
+          } else {
+            res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end('404 Not Found');
+          }
         }
       });
       return;

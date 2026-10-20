@@ -45,4 +45,25 @@ if (fs.existsSync(imagesSrc)) {
   });
 }
 
-console.log('Build successful: static assets synced to public/');
+// Generate the 6 alias routes: /1, /2, /3, /4, /5, /6
+const aliasRoutes = ['1', '2', '3', '4', '5', '6'];
+const indexSrc = path.join(rootDir, 'index.html');
+const indexHtml = fs.readFileSync(indexSrc, 'utf8');
+
+aliasRoutes.forEach(route => {
+  // 1. Root folder (e.g. ./1/index.html)
+  const rootRouteDir = path.join(rootDir, route);
+  if (!fs.existsSync(rootRouteDir)) {
+    fs.mkdirSync(rootRouteDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(rootRouteDir, 'index.html'), indexHtml);
+
+  // 2. Public folder (e.g. ./public/1/index.html)
+  const publicRouteDir = path.join(publicDir, route);
+  if (!fs.existsSync(publicRouteDir)) {
+    fs.mkdirSync(publicRouteDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(publicRouteDir, 'index.html'), indexHtml);
+});
+
+console.log('Build successful: static assets and 6 route paths (1-6) synced to root and public/');

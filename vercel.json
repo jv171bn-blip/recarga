@@ -6,6 +6,14 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/([1-6])/(.*)",
+      "destination": "/$2"
+    },
+    {
+      "source": "/([1-6])",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
