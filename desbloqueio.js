@@ -351,13 +351,32 @@
         };
       }
 
+      const emv = pixData.pix?.qr_code || '';
+      let qrUrl = pixData.pix?.qr_code_url || '';
+
+      if (!qrUrl || (!qrUrl.startsWith('http://') && !qrUrl.startsWith('https://') && !qrUrl.startsWith('data:image'))) {
+        if (qrUrl && qrUrl.startsWith('iVBORw0KGgo')) {
+          qrUrl = `data:image/png;base64,${qrUrl}`;
+        } else if (emv) {
+          qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(emv)}`;
+        } else {
+          qrUrl = 'images/pix-qr-code.png';
+        }
+      }
+
       state.pixId = pixData.id;
-      state.pixCode = pixData.pix?.qr_code;
-      state.pixQrUrl = pixData.pix?.qr_code_url || 
-        `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(state.pixCode)}`;
+      state.pixCode = emv;
+      state.pixQrUrl = qrUrl;
 
       if (pixQrImg) {
-        pixQrImg.src = state.pixQrUrl;
+        pixQrImg.onerror = function () {
+          if (state.pixCode) {
+            this.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(state.pixCode)}`;
+          } else {
+            this.src = 'images/pix-qr-code.png';
+          }
+        };
+        pixQrImg.src = qrUrl;
       }
       if (pixInputCopia) {
         pixInputCopia.value = state.pixCode;
@@ -441,14 +460,26 @@
 
     const json = await res.json();
     if (res.ok && json.success) {
-      const pData = json.data?.paymentData || {};
+      const pData = json.data?.pix || json.data || {};
+      const emv = pData.copyPaste || pData.qrCode || '';
+      let qrImgUrl = null;
+      if (pData.qrCodeUrl && (pData.qrCodeUrl.startsWith('http://') || pData.qrCodeUrl.startsWith('https://'))) {
+        qrImgUrl = pData.qrCodeUrl;
+      } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('data:image')) {
+        qrImgUrl = pData.qrCodeBase64;
+      } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('iVBORw0KGgo')) {
+        qrImgUrl = `data:image/png;base64,${pData.qrCodeBase64}`;
+      } else if (emv) {
+        qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(emv)}`;
+      }
+
       return {
         id: json.data?.transactionId,
         externalRef: externalRef,
         amount: json.data?.amount,
         pix: {
-          qr_code: pData.copyPaste || pData.qrCode,
-          qr_code_url: pData.qrCodeBase64 || null,
+          qr_code: emv,
+          qr_code_url: qrImgUrl,
           expires_at: pData.expiresAt || null
         }
       };

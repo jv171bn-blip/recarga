@@ -112,7 +112,7 @@
           </div>
 
           <!-- Card 2: A partir de R$ 39,90 (MAIS VENDIDO) -->
-          <div class="offer-card-top has-badge" onclick="window.selecionarOferta(40);">
+          <div class="offer-card-top has-badge" onclick="window.selecionarOferta(39.90);">
             <span class="offer-top-badge">MAIS VENDIDO</span>
             <div class="offer-top-left">
               <span class="offer-top-prefix">A PARTIR DE</span>
@@ -160,6 +160,15 @@
           <div class="input-field-wrapper">
             <input type="tel" id="input-cpf" class="input-phone" inputmode="numeric" placeholder="CPF do titular"
               aria-label="CPF do titular" maxlength="14" autocomplete="off" />
+            <div id="cpf-error" class="input-error-msg">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+              <span>CPF incompleto. Digite os 11 números.</span>
+            </div>
           </div>
 
           <div id="phone-confirm" class="phone-confirm-box">
@@ -328,8 +337,8 @@
           <div class="values-grid" id="values-grid">
             <button type="button" class="btn-value" data-value="20">
               <span class="val-price">R$ 20</span>
-              <span class="val-bonus-tag">+5GB bônus</span>
-              <span class="val-validity">Internet 30 dias</span>
+              <span class="val-bonus-tag">+3GB bônus</span>
+              <span class="val-validity">Whats ilimitado</span>
             </button>
             <button type="button" class="btn-value" data-value="25">
               <span class="val-price">R$ 25</span>
@@ -346,10 +355,11 @@
               <span class="val-bonus-tag">+16GB bônus</span>
               <span class="val-validity">Internet 30 dias</span>
             </button>
-            <button type="button" class="btn-value" data-value="40">
-              <span class="val-price">R$ 40</span>
-              <span class="val-bonus-tag">+20GB bônus</span>
-              <span class="val-validity">Internet 30 dias</span>
+            <button type="button" class="btn-value highlight-border" data-value="39.90">
+              <span class="badge-mais-escolhido">Mais vendido</span>
+              <span class="val-price">R$ 39,90</span>
+              <span class="val-bonus-tag highlight">+5GB bônus</span>
+              <span class="val-validity">Whats + Insta ilimitado</span>
             </button>
             <button type="button" class="btn-value highlight-border selected" data-value="50">
               <span class="badge-mais-escolhido">Mais escolhido</span>

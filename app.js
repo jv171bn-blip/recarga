@@ -15,10 +15,12 @@
   ]);
 
   const BONUS_BY_VALUE = {
-    20: '+5GB (30 dias)',
+    20: '+3GB + WhatsApp (30 dias)',
     25: '+8GB (30 dias)',
     30: '+12GB (30 dias)',
     35: '+16GB (30 dias)',
+    39.9: '+5GB + WhatsApp + Instagram (30 dias)',
+    '39.90': '+5GB + WhatsApp + Instagram (30 dias)',
     40: '+20GB (30 dias)',
     50: '+30GB (30 dias)',
     70: '+45GB (30 dias)',
@@ -31,7 +33,6 @@
   ];
   const TRACKING_STORAGE_KEY = "tim_tracking_params";
 
-  // --- State ---
   // --- State ---
   let state = {
     phone: '',
@@ -68,6 +69,7 @@
   const inputPhone = document.getElementById('input-phone');
   const inputCpf = document.getElementById('input-cpf');
   const phoneError = document.getElementById('phone-error');
+  const cpfError = document.getElementById('cpf-error');
   const phoneConfirm = document.getElementById('phone-confirm');
   const confirmPhoneDisplay = document.getElementById('confirm-phone-display');
   const btnPhoneSubmit = document.getElementById('btn-phone-submit');
@@ -281,12 +283,44 @@
     const isCpfComplete = cpfClean.length === 11;
 
     // Error message display for phone
-    if (showErrorOnBlur && isInvalidDDD) {
-      inputPhone.classList.add('error');
-      phoneError.classList.add('visible');
+    if (showErrorOnBlur) {
+      if (isInvalidDDD) {
+        inputPhone.classList.add('error');
+        if (phoneError) {
+          const span = phoneError.querySelector('span');
+          if (span) span.textContent = 'DDD inválido. Verifique o número digitado.';
+          phoneError.classList.add('visible');
+        }
+      } else if (clean.length > 0 && clean.length < 11) {
+        inputPhone.classList.add('error');
+        if (phoneError) {
+          const span = phoneError.querySelector('span');
+          if (span) span.textContent = 'Número incompleto. Digite o DDD + 9 números.';
+          phoneError.classList.add('visible');
+        }
+      } else {
+        inputPhone.classList.remove('error');
+        if (phoneError) phoneError.classList.remove('visible');
+      }
+
+      if (inputCpf) {
+        if (cpfClean.length > 0 && cpfClean.length < 11) {
+          inputCpf.classList.add('error');
+          if (cpfError) cpfError.classList.add('visible');
+        } else {
+          inputCpf.classList.remove('error');
+          if (cpfError) cpfError.classList.remove('visible');
+        }
+      }
     } else {
-      inputPhone.classList.remove('error');
-      phoneError.classList.remove('visible');
+      if (clean.length === 0 || isPhoneComplete) {
+        inputPhone.classList.remove('error');
+        if (phoneError) phoneError.classList.remove('visible');
+      }
+      if (inputCpf && (cpfClean.length === 0 || isCpfComplete)) {
+        inputCpf.classList.remove('error');
+        if (cpfError) cpfError.classList.remove('visible');
+      }
     }
 
     // Confirmation box display
@@ -412,7 +446,7 @@
     const btn = e.target.closest('.btn-value');
     if (!btn) return;
 
-    const val = parseInt(btn.dataset.value, 10);
+    const val = parseFloat(btn.dataset.value);
     state.rechargeValue = val;
 
     // Update buttons styling
@@ -436,13 +470,14 @@
   });
 
   window.selecionarOferta = function(val) {
-    state.rechargeValue = val;
+    const numVal = parseFloat(val);
+    state.rechargeValue = numVal;
     if (valuesGrid) {
       valuesGrid.querySelectorAll('.btn-value').forEach(b => {
         b.classList.remove('selected');
         const checkBadge = b.querySelector('.selected-check-badge');
         if (checkBadge) checkBadge.remove();
-        if (parseInt(b.dataset.value, 10) === val) {
+        if (Math.abs(parseFloat(b.dataset.value) - numVal) < 0.05) {
           b.classList.add('selected');
           const badge = document.createElement('span');
           badge.className = 'selected-check-badge';
@@ -583,14 +618,26 @@
 
     const json = await res.json();
     if (res.ok && json.success) {
-      const pData = json.data?.paymentData || {};
+      const pData = json.data?.paymentData || json.data?.pix || json.data || {};
+      const emv = pData.copyPaste || pData.qrCode || '';
+      let qrImgUrl = null;
+      if (pData.qrCodeUrl && (pData.qrCodeUrl.startsWith('http://') || pData.qrCodeUrl.startsWith('https://'))) {
+        qrImgUrl = pData.qrCodeUrl;
+      } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('data:image')) {
+        qrImgUrl = pData.qrCodeBase64;
+      } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('iVBORw0KGgo')) {
+        qrImgUrl = `data:image/png;base64,${pData.qrCodeBase64}`;
+      } else if (emv) {
+        qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(emv)}`;
+      }
+
       return {
         id: json.data?.transactionId,
         externalRef: externalRef,
         amount: json.data?.amount,
         pix: {
-          qr_code: pData.copyPaste || pData.qrCode,
-          qr_code_url: pData.qrCodeBase64 || null,
+          qr_code: emv,
+          qr_code_url: qrImgUrl,
           expires_at: pData.expiresAt || null
         }
       };
@@ -676,10 +723,19 @@
 
       state.pixId = pixData.id;
       state.pixCode = pixData.pix?.qr_code;
-      state.pixQrUrl = pixData.pix?.qr_code_url || (state.pixCode ? `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(state.pixCode)}` : 'images/pix-qr-code.png');
+      let appQrUrl = pixData.pix?.qr_code_url;
+      if (!appQrUrl || (!appQrUrl.startsWith('http://') && !appQrUrl.startsWith('https://') && !appQrUrl.startsWith('data:image'))) {
+        if (appQrUrl && appQrUrl.startsWith('iVBORw0KGgo')) {
+          appQrUrl = `data:image/png;base64,${appQrUrl}`;
+        } else if (state.pixCode) {
+          appQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(state.pixCode)}`;
+        } else {
+          appQrUrl = 'images/pix-qr-code.png';
+        }
+      }
+      state.pixQrUrl = appQrUrl;
 
       // Update QR Code Image
-      pixQrImg.src = state.pixQrUrl;
       pixQrImg.onerror = () => {
         if (state.pixCode) {
           pixQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(state.pixCode)}`;
@@ -687,6 +743,7 @@
           pixQrImg.src = 'images/pix-qr-code.png';
         }
       };
+      pixQrImg.src = state.pixQrUrl;
 
       // Set Countdown Timer (default: 15 minutos)
       if (pixData.pix?.expires_at) {

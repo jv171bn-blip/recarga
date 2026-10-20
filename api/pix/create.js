@@ -29,6 +29,18 @@ module.exports = async (req, res) => {
 
     const sale = await createPixSale(amount, telefone, utmParams, null, productName, customer);
     const pData = sale.data?.paymentData || {};
+    const emvCode = pData.copyPaste || pData.qrCode || '';
+
+    let qrImgUrl = null;
+    if (pData.qrCodeUrl && (pData.qrCodeUrl.startsWith('http://') || pData.qrCodeUrl.startsWith('https://'))) {
+      qrImgUrl = pData.qrCodeUrl;
+    } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('data:image')) {
+      qrImgUrl = pData.qrCodeBase64;
+    } else if (pData.qrCodeBase64 && pData.qrCodeBase64.startsWith('iVBORw0KGgo')) {
+      qrImgUrl = `data:image/png;base64,${pData.qrCodeBase64}`;
+    } else if (emvCode) {
+      qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(emvCode)}`;
+    }
 
     return res.status(200).json({
       success: true,
@@ -37,8 +49,8 @@ module.exports = async (req, res) => {
         externalRef: sale.data?.externalRef,
         amount: sale.data?.amount,
         pix: {
-          qr_code: pData.copyPaste || pData.qrCode,
-          qr_code_url: pData.qrCodeBase64 || null,
+          qr_code: emvCode,
+          qr_code_url: qrImgUrl,
           expires_at: pData.expiresAt || null
         }
       }
