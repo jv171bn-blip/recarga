@@ -1111,7 +1111,11 @@
   const cookieBanner = document.getElementById('cookie-banner');
   const btnCookieAccept = document.getElementById('btn-cookie-accept');
   const btnCookieReject = document.getElementById('btn-cookie-reject');
-  const COOKIE_STORAGE_KEY = 'tim_cookies_consent';
+  const btnCookiePref = document.getElementById('btn-cookie-pref');
+  const cookieModal = document.getElementById('cookie-pref-modal');
+  const btnCloseCookiePref = document.getElementById('btn-close-cookie-pref');
+  const btnSaveCookiePref = document.getElementById('btn-save-cookie-pref');
+  const COOKIE_STORAGE_KEY = 'tim_cookies_consent_v2';
 
   function initCookieBanner() {
     if (!cookieBanner) return;
@@ -1120,23 +1124,59 @@
       if (!consent) {
         setTimeout(() => {
           cookieBanner.classList.add('visible');
-        }, 350);
+        }, 300);
       }
     } catch (e) {
       cookieBanner.classList.add('visible');
     }
 
+    const closeCookieBanner = (status) => {
+      try {
+        localStorage.setItem(COOKIE_STORAGE_KEY, status);
+        localStorage.setItem('tim_cookies_consent', status);
+      } catch (e) {}
+      cookieBanner.classList.remove('visible');
+      if (cookieModal) {
+        cookieModal.style.display = 'none';
+      }
+    };
+
     if (btnCookieAccept) {
       btnCookieAccept.addEventListener('click', () => {
-        try { localStorage.setItem(COOKIE_STORAGE_KEY, 'accepted'); } catch (e) {}
-        cookieBanner.classList.remove('visible');
+        closeCookieBanner('accepted');
       });
     }
 
     if (btnCookieReject) {
       btnCookieReject.addEventListener('click', () => {
-        try { localStorage.setItem(COOKIE_STORAGE_KEY, 'rejected'); } catch (e) {}
-        cookieBanner.classList.remove('visible');
+        closeCookieBanner('dismissed');
+      });
+    }
+
+    if (btnCookiePref && cookieModal) {
+      btnCookiePref.addEventListener('click', () => {
+        cookieModal.style.display = 'flex';
+      });
+    }
+
+    if (btnCloseCookiePref && cookieModal) {
+      btnCloseCookiePref.addEventListener('click', () => {
+        cookieModal.style.display = 'none';
+      });
+    }
+
+    if (cookieModal) {
+      const overlay = cookieModal.querySelector('.cookie-modal-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', () => {
+          cookieModal.style.display = 'none';
+        });
+      }
+    }
+
+    if (btnSaveCookiePref) {
+      btnSaveCookiePref.addEventListener('click', () => {
+        closeCookieBanner('customized');
       });
     }
   }
