@@ -15,16 +15,16 @@
   ]);
 
   const BONUS_BY_VALUE = {
-    20: '+3GB + WhatsApp (30 dias)',
-    25: '+8GB (30 dias)',
-    30: '+12GB (30 dias)',
-    35: '+16GB (30 dias)',
-    39.9: '+5GB + WhatsApp + Instagram (30 dias)',
-    '39.90': '+5GB + WhatsApp + Instagram (30 dias)',
-    40: '+20GB (30 dias)',
-    50: '+30GB (30 dias)',
-    70: '+45GB (30 dias)',
-    100: '+70GB (30 dias)'
+    20: '+3GB + WhatsApp ilimitado',
+    25: '+3GB + WhatsApp ilimitado',
+    30: '+3GB + WhatsApp ilimitado',
+    35: '+3GB + WhatsApp ilimitado',
+    39.9: '+5GB + WhatsApp + Instagram ilimitado',
+    '39.90': '+5GB + WhatsApp + Instagram ilimitado',
+    40: '+5GB + WhatsApp + Instagram ilimitado',
+    50: '+5GB + WhatsApp + Instagram ilimitado',
+    70: '+5GB + WhatsApp + Instagram ilimitado',
+    100: '+5GB + WhatsApp + Instagram ilimitado'
   };
 
   const TRACKING_PARAMS = [
@@ -43,8 +43,8 @@
       dataNascimento: '',
       raw: null
     },
-    rechargeValue: 50,
-    valorOriginalRecarga: 50,
+    rechargeValue: 39.90,
+    valorOriginalRecarga: 39.90,
     isTaxaDesbloqueio: false,
     extraCredit: false,
     descontoAtivo: false,
@@ -418,7 +418,7 @@
     const total = getTotal();
     resumoRechargeVal.textContent = `R$ ${formatCurrency(val)}`;
     if (resumoBonusVal) {
-      resumoBonusVal.textContent = BONUS_BY_VALUE[val] || `+${Math.round(val * 0.6)}GB (30 dias)`;
+      resumoBonusVal.textContent = BONUS_BY_VALUE[val] || (val >= 39.9 ? '+5GB + WhatsApp + Instagram ilimitado' : '+3GB + WhatsApp ilimitado');
     }
     if (state.descontoAtivo) {
       resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 5 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
@@ -1095,8 +1095,8 @@
     state.phone = '';
     state.cpf = '';
     state.customer = { nome: '', cpf: '', dataNascimento: '', raw: null };
-    state.rechargeValue = 50;
-    state.valorOriginalRecarga = 50;
+    state.rechargeValue = 39.90;
+    state.valorOriginalRecarga = 39.90;
     state.isTaxaDesbloqueio = false;
     state.extraCredit = false;
     state.descontoAtivo = false;
