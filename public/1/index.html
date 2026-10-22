@@ -265,7 +265,7 @@
             <span class="label-5g">5G</span>
           </div>
         </div>
-        <h2 class="promo-app-headline">
+        <h2 id="promo-app-headline" class="promo-app-headline">
           RECARREGUE NO APP MEU TIM E TENHA WHATSAPP O MÊS INTEIRO! NAS RECARGAS A PARTIR DE R$30, VOCÊ AINDA RECEBE PIX
           DE R$3 NA CONTA!
         </h2>
@@ -411,13 +411,23 @@
           </div>
         </section>
 
-        <!-- Order Bump (Shown only for value < 50) -->
+        <!-- Order Bump (Pacote Netflix + Spotify) -->
         <section id="section-order-bump" style="display: none;">
           <label for="order-bump-checkbox" class="order-bump-card">
             <input type="checkbox" id="order-bump-checkbox" class="order-bump-checkbox" />
-            <div class="order-bump-content">
-              <p>Adicione +R$5 de crédito extra</p>
-              <p>Garanta um saldo a mais na sua conta TIM por apenas R$5.</p>
+            <div class="order-bump-body">
+              <div class="order-bump-header-row">
+                <div class="order-bump-logos">
+                  <img src="images/netflix-logo-illustration-in-square-background-free-png.webp" alt="Netflix" class="order-bump-logo-img netflix" />
+                  <span class="order-bump-plus">+</span>
+                  <img src="images/Spotify_icon.png" alt="Spotify" class="order-bump-logo-img spotify" />
+                </div>
+                <span class="order-bump-badge">OFERTA ESPECIAL</span>
+              </div>
+              <div class="order-bump-content">
+                <p class="order-bump-title">Adicione 1 Mês de Netflix + Spotify Premium</p>
+                <p class="order-bump-desc">Filmes, séries e músicas sem anúncios liberados por 1 mês por apenas <strong>+R$ 19,90</strong>.</p>
+              </div>
             </div>
           </label>
         </section>
@@ -440,8 +450,8 @@
                 <span id="resumo-bonus-val" class="resumo-val extra">+5GB + WhatsApp + Instagram ilimitado</span>
               </div>
               <div class="resumo-item" id="resumo-extra-row" style="display: none;">
-                <span class="resumo-label">Crédito extra</span>
-                <span id="resumo-extra-val" class="resumo-val extra">+ R$ 5,00</span>
+                <span class="resumo-label">Netflix + Spotify (1 mês)</span>
+                <span id="resumo-extra-val" class="resumo-val extra">+ R$ 19,90</span>
               </div>
             </div>
             <div class="resumo-divider">

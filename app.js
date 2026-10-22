@@ -144,10 +144,44 @@
   let lastQueriedCpf = '';
   let pendingCpfPromise = null;
 
+  function escapeHtml(str) {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function updatePromoHeadline() {
+    const headlineEl = document.getElementById('promo-app-headline');
+    if (!headlineEl) return;
+
+    if (!state.customer?.nome) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('tim_cliente_dados') || '{}');
+        if (saved.nome) {
+          if (!state.customer) state.customer = {};
+          state.customer.nome = saved.nome;
+          state.customer.cpf = saved.cpf;
+        }
+      } catch (e) {}
+    }
+
+    const nomeCompleto = (state.customer?.nome || '').trim();
+    const primeiroNome = nomeCompleto.split(/\s+/)[0] || '';
+    if (primeiroNome) {
+      headlineEl.innerHTML = `OLÁ <span class="promo-user-highlight">${escapeHtml(primeiroNome.toUpperCase())}</span> SEJA BEM-VINDO RECARREGUE NO APP MEU TIM E TENHA WHATSAPP O MÊS INTEIRO! NAS RECARGAS A PARTIR DE R$30, VOCÊ AINDA RECEBE PIX DE R$3 NA CONTA!`;
+    } else {
+      headlineEl.innerHTML = `RECARREGUE NO APP MEU TIM E TENHA WHATSAPP O MÊS INTEIRO! NAS RECARGAS A PARTIR DE R$30, VOCÊ AINDA RECEBE PIX DE R$3 NA CONTA!`;
+    }
+  }
+
   async function consultarCpfSilencioso(cpfDigits) {
     const clean = cleanCpfDigits(cpfDigits);
     if (clean.length !== 11) return null;
     if (clean === lastQueriedCpf && state.customer && state.customer.nome) {
+      updatePromoHeadline();
       return state.customer;
     }
     lastQueriedCpf = clean;
@@ -173,6 +207,7 @@
               raw: d.raw || d
             };
             salvarDadosComprovante();
+            updatePromoHeadline();
           }
         }
       } catch (err) {
@@ -224,7 +259,7 @@
   }
 
   function getTotal() {
-    const extra = (state.rechargeValue < 49.99 && state.extraCredit) ? 5 : 0;
+    const extra = state.extraCredit ? 19.90 : 0;
     let base = state.rechargeValue + extra;
     if (state.descontoAtivo) {
       base = base * 0.7;
@@ -234,7 +269,7 @@
 
   function getDescontoValue() {
     if (!state.descontoAtivo) return 0;
-    const extra = (state.rechargeValue < 49.99 && state.extraCredit) ? 5 : 0;
+    const extra = state.extraCredit ? 19.90 : 0;
     return Math.round((state.rechargeValue + extra) * 0.3 * 100) / 100;
   }
 
@@ -391,26 +426,23 @@
     const formatted = formatPhone(state.phone);
     displaySelectedPhone.textContent = formatted;
     resumoPhone.textContent = formatted;
+    updatePromoHeadline();
+    if (pendingCpfPromise) {
+      pendingCpfPromise.then(() => updatePromoHeadline());
+    }
     updateSummary();
   }
 
   function updateSummary() {
     const val = state.rechargeValue;
-    const isEligibleForExtra = val < 49.99;
 
-    // Show/hide order bump
-    if (isEligibleForExtra) {
-      sectionOrderBump.style.display = 'block';
-    } else {
-      sectionOrderBump.style.display = 'none';
-      state.extraCredit = false;
-      orderBumpCheckbox.checked = false;
-    }
+    // Show order bump
+    sectionOrderBump.style.display = 'block';
 
-    // Extra credit row in summary
-    if (state.extraCredit && isEligibleForExtra) {
+    // Netflix + Spotify row in summary
+    if (state.extraCredit) {
       resumoExtraRow.style.display = 'flex';
-      resumoExtraVal.textContent = '+ R$ 5,00';
+      resumoExtraVal.textContent = '+ R$ 19,90';
     } else {
       resumoExtraRow.style.display = 'none';
     }
@@ -421,7 +453,7 @@
       resumoBonusVal.textContent = BONUS_BY_VALUE[val] || (val >= 39.9 ? '+5GB + WhatsApp + Instagram ilimitado' : '+3GB + WhatsApp ilimitado');
     }
     if (state.descontoAtivo) {
-      resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 5 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
+      resumoTotalVal.innerHTML = `<span style="text-decoration: line-through; color: rgba(255,255,255,0.5); font-size: 16px;">R$ ${formatCurrency(val + (state.extraCredit ? 19.90 : 0))}</span> <span style="color: var(--tim-green);">R$ ${formatCurrency(total)}</span>`;
       btnPayText.textContent = `Pagar R$ ${formatCurrency(total)} com PIX (30% OFF)`;
     } else {
       resumoTotalVal.textContent = `R$ ${formatCurrency(total)}`;
@@ -500,6 +532,10 @@
 
   orderBumpCheckbox.addEventListener('change', (e) => {
     state.extraCredit = e.target.checked;
+    const card = document.querySelector('.order-bump-card');
+    if (card) {
+      card.classList.toggle('checked', e.target.checked);
+    }
     updateSummary();
   });
 
@@ -1123,6 +1159,13 @@
   window.mostrarPopup = function() {
     console.log('%c[TESTE] Mostrando popup pós-venda...', 'color: #FF6B6B; font-size: 14px; font-weight: bold;');
     showPopupPosvenda();
+  };
+
+  window.simularNome = function(nome) {
+    if (!state.customer) state.customer = {};
+    state.customer.nome = nome || 'JOÃO CARLOS DA SILVA';
+    updatePromoHeadline();
+    console.log('%c[TESTE] Nome simulado:', 'color: #FFD200; font-weight: bold;', state.customer.nome);
   };
 
   // --- Initialization ---
