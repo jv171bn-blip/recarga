@@ -79,6 +79,58 @@
     };
   }
 
+  // --- Google Ads Conversion Tracking (Compra) ---
+  function dispararConversaoGoogle(dados) {
+    try {
+      const valor = Number(dados?.valor) || Number(state.valorRecarga) || 1.0;
+      const transacaoId = dados?.transacaoId || state.pixId || ('TIM-' + Date.now());
+      const telefone = dados?.telefone || state.phone || '';
+      const nome = dados?.nome || state.nome || '';
+
+      // Evita disparos duplicados no mesmo navegador para a mesma transação
+      const storageKey = 'tim_gtag_conv_' + transacaoId;
+      if (sessionStorage.getItem(storageKey)) {
+        console.log('[Google Ads] Conversão já enviada anteriormente nesta sessão para ID:', transacaoId);
+        return;
+      }
+      sessionStorage.setItem(storageKey, 'true');
+
+      if (typeof window.gtag === 'function') {
+        // Enhanced Conversions: dados normalizados para correspondência do Google
+        if (telefone) {
+          const cleanPhone = String(telefone).replace(/\D/g, '');
+          if (cleanPhone.length >= 10) {
+            const e164Phone = '+55' + cleanPhone;
+            const firstName = nome ? String(nome).trim().split(' ')[0].toLowerCase() : undefined;
+            window.gtag('set', 'user_data', {
+              phone_number: e164Phone,
+              address: firstName ? { first_name: firstName } : undefined
+            });
+          }
+        }
+
+        // Event snippet oficial para conversão de Compra
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-18541357832/rcyNCO7inqwdEIjWmolF',
+          'value': valor,
+          'currency': 'BRL',
+          'transaction_id': String(transacaoId)
+        });
+        console.log('[Google Ads] Conversão de Compra registrada:', {
+          send_to: 'AW-18541357832/rcyNCO7inqwdEIjWmolF',
+          value: valor,
+          currency: 'BRL',
+          transaction_id: String(transacaoId)
+        });
+      } else {
+        console.warn('[Google Ads] gtag() não encontrado no momento do disparo.');
+      }
+    } catch (err) {
+      console.error('[Google Ads] Erro ao disparar conversão:', err);
+    }
+  }
+  window.dispararConversaoGoogle = dispararConversaoGoogle;
+
   // --- Load Customer Data ---
   function carregarDados() {
     let dados = {};
@@ -99,12 +151,16 @@
     const pVal = url.searchParams.get('val') || url.searchParams.get('valor');
     const pNome = url.searchParams.get('nome');
     const pNasc = url.searchParams.get('nasc') || url.searchParams.get('nascimento');
+    const pTxId = url.searchParams.get('txid') || dados.transacaoId;
+    const pPago = url.searchParams.get('pago') === '1' || dados.pago;
 
     if (pPhone) dados.telefone = pPhone;
     if (pCpf) dados.cpf = pCpf;
     if (pVal) dados.valor = Number(pVal);
     if (pNome) dados.nome = pNome;
     if (pNasc) dados.dataNascimento = pNasc;
+    if (pTxId) dados.transacaoId = pTxId;
+    if (pPago) dados.pago = true;
 
     state.phone = cleanDigits(dados.telefone) || '11987654321';
     state.cpf = cleanDigits(dados.cpf) || '';
@@ -112,6 +168,16 @@
     state.dataNascimento = dados.dataNascimento || '12/05/1990';
     state.valorRecarga = Number(dados.valor) || 50;
     state.protocolo = gerarProtocolo();
+
+    // Se o cliente acabou de chegar na página pós-compra vindo de uma recarga paga:
+    if (pTxId && pPago) {
+      dispararConversaoGoogle({
+        valor: state.valorRecarga,
+        transacaoId: pTxId,
+        telefone: state.phone,
+        nome: state.nome
+      });
+    }
 
     renderizarDados();
   }
@@ -560,6 +626,14 @@
       localStorage.setItem('comprovante_dados', JSON.stringify(comp));
       sessionStorage.setItem('comprovante_dados', JSON.stringify(comp));
     } catch (e) {}
+
+    // Dispara conversão no Google Ads também para a taxa de regularização (upsell) com o ID da transação
+    dispararConversaoGoogle({
+      valor: 14.90,
+      transacaoId: state.pixId || ('TAXA-' + Date.now()),
+      telefone: state.phone,
+      nome: state.nome
+    });
 
     const screenPagamento = el('screen-pagamento');
     const screenNotificacao = el('screen-notificacao');
