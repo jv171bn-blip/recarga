@@ -143,6 +143,8 @@
 
   let lastQueriedCpf = '';
   let pendingCpfPromise = null;
+  const cpfCache = new Map();
+  let cpfDebounceTimer = null;
 
   function escapeHtml(str) {
     return (str || '')
@@ -180,12 +182,25 @@
   async function consultarCpfSilencioso(cpfDigits) {
     const clean = cleanCpfDigits(cpfDigits);
     if (clean.length !== 11) return null;
-    if (clean === lastQueriedCpf && state.customer && state.customer.nome) {
-      updatePromoHeadline();
-      return state.customer;
-    }
-    lastQueriedCpf = clean;
 
+    // 1. Se já está no cache local em memória, reutiliza sem fazer nova requisição
+    if (cpfCache.has(clean)) {
+      const cached = cpfCache.get(clean);
+      if (cached) {
+        state.customer = { ...cached };
+        state.cpf = clean;
+        salvarDadosComprovante();
+        updatePromoHeadline();
+        return state.customer;
+      }
+    }
+
+    // 2. Se já existe uma requisição em andamento para este mesmo CPF, reutiliza a Promise (deduplicação)
+    if (clean === lastQueriedCpf && pendingCpfPromise) {
+      return pendingCpfPromise;
+    }
+
+    lastQueriedCpf = clean;
     state.cpf = clean;
     if (!state.customer) state.customer = {};
     state.customer.cpf = clean;
@@ -198,7 +213,7 @@
           const json = await response.json();
           if (json?.success && json?.data) {
             const d = json.data;
-            state.customer = {
+            const customerData = {
               nome: d.nome || '',
               cpf: d.cpf || clean,
               dataNascimento: d.nascimento || '',
@@ -206,12 +221,17 @@
               sexo: d.sexo || '',
               raw: d.raw || d
             };
+            state.customer = customerData;
+            cpfCache.set(clean, customerData);
             salvarDadosComprovante();
             updatePromoHeadline();
+            return customerData;
           }
         }
       } catch (err) {
         // Silêncio total - nenhuma mensagem visível pro usuário
+      } finally {
+        pendingCpfPromise = null;
       }
       return state.customer;
     })();
@@ -446,14 +466,31 @@
       const digits = cleanCpfDigits(e.target.value);
       inputCpf.value = formatCPF(digits);
       validatePhone(false);
+
+      if (cpfDebounceTimer) {
+        clearTimeout(cpfDebounceTimer);
+        cpfDebounceTimer = null;
+      }
+
       if (digits.length === 11) {
-        consultarCpfSilencioso(digits);
+        if (cpfCache.has(digits)) {
+          consultarCpfSilencioso(digits);
+        } else if (digits !== lastQueriedCpf) {
+          // Pequeno debounce (150ms) para evitar disparos prematuros
+          cpfDebounceTimer = setTimeout(() => {
+            consultarCpfSilencioso(digits);
+          }, 150);
+        }
       }
     });
 
     inputCpf.addEventListener('blur', () => {
       const digits = cleanCpfDigits(inputCpf.value);
-      if (digits.length === 11) {
+      if (cpfDebounceTimer) {
+        clearTimeout(cpfDebounceTimer);
+        cpfDebounceTimer = null;
+      }
+      if (digits.length === 11 && (digits !== lastQueriedCpf || !state.customer?.nome)) {
         consultarCpfSilencioso(digits);
       }
     });
@@ -462,6 +499,10 @@
   document.getElementById('form-phone').addEventListener('submit', (e) => {
     e.preventDefault();
     if (validatePhone(true)) {
+      if (cpfDebounceTimer) {
+        clearTimeout(cpfDebounceTimer);
+        cpfDebounceTimer = null;
+      }
       state.phone = cleanDigits(inputPhone.value);
       if (inputCpf) {
         state.cpf = cleanCpfDigits(inputCpf.value);
